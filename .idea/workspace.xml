@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1ac4d9c-1b62-4b1e-b23d-9ba05b6b64ac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Balloon.py" afterPath="$PROJECT_DIR$/Balloon.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameClasses.py" afterPath="$PROJECT_DIR$/GameClasses.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Instructions.py" afterPath="$PROJECT_DIR$/Instructions.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Supplementary.py" afterPath="$PROJECT_DIR$/Supplementary.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tutorial.py" afterPath="$PROJECT_DIR$/Tutorial.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PsychServer.py" afterPath="$PROJECT_DIR$/PsychServer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/payment_methods.py" afterPath="$PROJECT_DIR$/payment_methods.py" />
     </list>
     <ignored path="BART_baseline.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,28 +24,7 @@
     <favorites_list name="BART_baseline" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Supplementary.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Supplementary.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="86" column="195" selection-start-line="86" selection-start-column="195" selection-end-line="86" selection-end-column="195" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Instructions.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Instructions.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
-              <caret line="292" column="0" selection-start-line="292" selection-start-column="0" selection-end-line="292" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -56,7 +32,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/PsychServer.py" />
         <option value="$PROJECT_DIR$/Run.py" />
         <option value="$PROJECT_DIR$/../S_BART.0.3/GameClasses.py" />
         <option value="$PROJECT_DIR$/Data_handler.py" />
@@ -65,6 +40,8 @@
         <option value="$PROJECT_DIR$/GameClasses.py" />
         <option value="$PROJECT_DIR$/Supplementary.py" />
         <option value="$PROJECT_DIR$/Instructions.py" />
+        <option value="$PROJECT_DIR$/PsychServer.py" />
+        <option value="$PROJECT_DIR$/payment_methods.py" />
       </list>
     </option>
   </component>
@@ -364,9 +341,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1366" height="741" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15256798" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15256798" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -421,6 +398,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -436,6 +414,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -444,7 +423,7 @@
         <state relative-caret-position="4635">
           <caret line="309" column="58" selection-start-line="310" selection-start-column="178" selection-end-line="310" selection-end-column="183" />
           <folding>
-            <element signature="e#84#93#0" expanded="true" />
+            <element signature="e#84#93#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -491,6 +470,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="74" column="38" selection-start-line="74" selection-start-column="38" selection-end-line="74" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -508,20 +488,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PsychServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="592">
-          <caret line="214" column="0" selection-start-line="214" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="137" column="71" selection-start-line="137" selection-start-column="70" selection-end-line="137" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/instruction_quests.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -534,7 +500,7 @@
         <state relative-caret-position="400">
           <caret line="406" column="24" selection-start-line="406" selection-start-column="24" selection-end-line="406" selection-end-column="24" />
           <folding>
-            <element signature="e#84#93#0" expanded="true" />
+            <element signature="e#84#93#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -543,6 +509,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="393">
           <caret line="354" column="32" selection-start-line="354" selection-start-column="32" selection-end-line="354" selection-end-column="32" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -575,6 +542,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Instructions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="67">
+          <caret line="300" column="33" selection-start-line="300" selection-start-column="33" selection-end-line="300" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Supplementary.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -583,11 +558,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Instructions.py">
+    <entry file="file://$PROJECT_DIR$/PsychServer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="292" column="0" selection-start-line="292" selection-start-column="0" selection-end-line="292" selection-end-column="0" />
+        <state relative-caret-position="-2847">
+          <caret line="257" column="80" selection-start-line="257" selection-start-column="80" selection-end-line="257" selection-end-column="80" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="119" column="33" selection-start-line="119" selection-start-column="33" selection-end-line="119" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/payment_methods.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-290">
+          <caret line="182" column="53" selection-start-line="182" selection-start-column="53" selection-end-line="182" selection-end-column="53" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

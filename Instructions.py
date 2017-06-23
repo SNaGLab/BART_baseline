@@ -287,12 +287,12 @@ def Run_AllIntro(MyWin, path,skip):
         vid = visual.MovieStim3(MyWin, os.getcwd() +'/Resources/dist_vid.mp4', size=[700, 400], pos=[0, -150])
         distIm = visual.ImageStim(MyWin, os.getcwd() + '/Resources/DistImage.png',size=[0.8,0.8], pos=[0,-.5])
         bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
-                                          "The scale below represents the size of a balloon from 0 pumps (leftmost column) to your estimated maximum balloon size (rightmost column). Each column represents a slightly larger balloon. \nAt what size do you think the balloons in this task are most likely to pop? You can place a bet by tapping one of the columns with your cursor."
+                                          "The scale below represents the size of a balloon from 0 pumps (leftmost column) to your estimated maximum balloon size (rightmost column). Each column represents a slightly larger balloon. \nAt what size do you think the balloons in this task are most likely to pop? Rate your expectations by clicking and dragging a bar."
                                           ,True)
         bButton.buttonwait(extras=[distIm])
 
         bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
-                                          "Imagine that you would play as few as 100 balloons. At what size do you think these balloons will pop?\n\n You can place a bet by tapping one of the columns with your cursor. The more bets you place in a column, the more you expect that the balloons will pop at that size.",
+                                          "Imagine that you would play as at least 100 balloons. At what size do you think these balloons will pop?\n\n You can place a bet by tapping one of the columns with your cursor. The more bets you place in a column, the more you expect that the balloons will pop at that size.",
                                           True)
         bButton.buttonwait(extras=[vid])
         bButton = Tutorial.InstructionBox(MyWin, [0,0.5],"We will pay you for the accuracy of your bets by comparing your bets against one randomly drawn popped balloon from the experiment today. The more bets you place on the correct column, the more you win.", True)

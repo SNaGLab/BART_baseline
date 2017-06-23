@@ -46,12 +46,9 @@ class Subject():
         # store static info
         self.subjectTrial['SubjectID'] = subjID
         self.subjectTrial['Trial'] = selectedTrial
-        self.subjectTrial['Belief'] = trial_firstRow.Belief
-        self.subjectTrial['InGroup'] = trial_firstRow.In
         self.subjectTrial['Run'] = trial_firstRow.Run
         self.subjectTrial['P2'] = trial_firstRow.P2_SubjectID
         self.subjectTrial['Game'] = trial_firstRow.Game
-        self.subjectTrial['Group'] = trial_firstRow.Group
 
         # store p1 information
         self.subjectTrial['P1_max'] = max(trial_dataFrame.Tokens)
@@ -93,22 +90,16 @@ class Subject():
         # get tokens for trial
         if self.subjectTrial['P1_end'] == 'Cash':
             if self.subjectTrial['Game'] == 'Single Player':
-                if self.subjectTrial['Run'] > 1:
-                    self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']/2
-                else:
-                    self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
+                self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
             else:
                 if self.subjectTrial['P1_max'] > self.subjectTrial['P2_max']:
                     self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
-                elif self.subjectTrial['P1_max'] == self.subjectTrial['P2_max']:
-                    self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max'] / 2
-                elif self.subjectTrial['P1_max'] < self.subjectTrial['P2_max']:
+                else:
                     self.subjectTrial['TrialEndow'] = 0
         else:
             self.subjectTrial['TrialEndow'] = 0
 
         self.subjectTrial['TrialEndow'] = str(self.subjectTrial['TrialEndow']) + '| $' + str(self.subjectTrial['TrialEndow'] * .2)
-
 
         self.subjectTrial = pd.Series(self.subjectTrial)
 
@@ -117,10 +108,8 @@ class Subject():
     def ratings(self,otherAvg):
         """Creates payment for various distributions and ratings during task"""
 
-        # get average ratings for everyone else and subset groups
-        allratings = otherAvg[0]
-        g0 = otherAvg[1]
-        g1 = otherAvg[2]
+        # get average ratings for everyone else
+        allratings = otherAvg
 
         # load in rating dataframes
         dist_data = pd.read_csv(os.path.join(self.filepath, 'DistRatings.csv'))
@@ -161,23 +150,8 @@ class Subject():
             except:
                 pass
 
-        # pay out to apprpriate group if In or Out group task
-        if self.subjectTrial['Group'] == 1:
-            if othersRatings['In'] == 'instructs':
-                otherAvg = allratings
-            elif othersRatings['In']:
-                otherAvg = g1
-            elif not othersRatings['In']:
-                otherAvg = g0
-        else:
-            if othersRatings['In'] == 'instructs':
-                otherAvg = allratings
-            elif othersRatings['In']:
-                otherAvg = g0
-            elif not othersRatings['In']:
-                otherAvg = g1
-
         # determine payment for social rating
+        otherAvg = allratings
         if otherAvg > Max:
             OtherCorrectBar = 0
         else:
@@ -218,21 +192,13 @@ class Subject():
 def allSubAvgs(path,sess):
     """ Calculate the average Adj. pumps for all subjects"""
 
-    subvalsg1 = []  # for group 1
-    subvalsg0 = []  # for group 2
     subvals = []    # for all subjects
-
     for i in DS_cleaner(path):
         subpath = os.path.join(path, i)
         data = pd.read_csv(os.path.join(subpath, DS_cleaner(subpath)[0]))
         if data.loc[0,'Session'] == sess:
-            data = data[data.Cash == 1]
-            if data.reset_index().loc[1,'Group'] == 1:
-                subvalsg1.append(np.mean(list(data.Tokens)))
-            else:
-                subvalsg0.append(np.mean(list(data.Tokens)))
             subvals.append(np.mean(list(data.Tokens)))
-    return [np.mean(subvals),np.mean(subvalsg0),np.mean(subvalsg1)]
+    return np.mean(subvals)
 
 def GetAllSubs(path,sess):
 
@@ -260,11 +226,6 @@ def GetAllSubs(path,sess):
             if p2frame.loc[0]['P2_end'] == 'Cash':
                 subframe.loc[i, 'fromOther'] += p2frame.loc[0]['P2_max']
 
-        # if single player selected for other
-        if subframe.loc[i, 'Game'] == 'Single Player' and subframe.loc[i, 'P1_end'] == 'Cash':
-            if subframe.loc[i, 'InGroup']:
-                InGroup = subframe[subframe.Group == subframe.loc[i, 'Group']]
-                subframe.loc[np.random.choice(list(InGroup.index)), 'fromOther'] += (subframe.loc[i, 'P1_max'] / 2)
     for i in subframe.index:
         subframe.loc[i, 'fromOther'] = str(subframe.loc[i, 'fromOther']) + '| $'+ str(subframe.loc[i, 'fromOther'] * .2)
 
