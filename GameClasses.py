@@ -38,25 +38,8 @@ class Game:
                                         color = 'black',
                                         )
 
-        self.Cover = visual.Rect(win = self.window,
-                                      width = 0.8,
-                                      fillColor='white',
-                                      opacity=1,
-                                      height=1.8,
-                                      pos = [0.5,0],
-                                      lineColor='black',
-                                      lineWidth=2)
 
-        self.RedEx = visual.TextStim(win=window,
-                            text='X',
-                            color='red',
-                            pos = [0,0],
-                            height = 0.2)
 
-        self.balloonColors = {'0':os.getcwd() + '/Resources/Balloons/BlueBalloonFull.png',
-                              '1':os.getcwd() + '/Resources/Balloons/YellowBalloonFull.png'}
-        self.IconColors = {'0': os.getcwd() + '/Resources/gameImages/BlueGroup.png',
-                              '1': os.getcwd() + '/Resources/gameImages/YellowGroup.png'}
 
     # Trial Setup methods __________________________________________________________
     def drawFixationGetMotherPacket(self,Socket,server,rStart = False):
@@ -89,12 +72,6 @@ class Game:
             except timeout: # If no message is received in 10s send ISSUE to mother and wait again
                 Socket.sendto('ISSUE', server)
 
-
-    def helpFlip(self, group):
-        if group == '0':
-            return 1
-        else:
-            return 0
 
     def drawBreak(self,Socket):
         '''
@@ -176,8 +153,9 @@ class Game:
         Subject Plays one trial of BART either timed or not.
         '''
         # balloon instance
+
+
         b1 = balloon(self.window, 0, os.getcwd() + '/Resources/Balloons',self.eventRecorder)
-        b1.balloon.image = self.balloonColors[MotherPacket['Group']]
         self.eventRecorder.p1 = b1
         self.eventRecorder.p2 = None
         # Get Trial ready
@@ -189,34 +167,18 @@ class Game:
             if MotherPacket['Rating']:
                 WithinTaskRating(self.window, self.path, MotherPacket)
 
-            TokenIcons = {
-                '0': os.getcwd() + '/Resources/gameImages/Token_blue_split_in.png',
-                '1': os.getcwd() + '/Resources/gameImages/Token_yellow_split_in.png',
-                '2': os.getcwd() + '/Resources/gameImages/Token_blue_split_out.png',
-                '3': os.getcwd() + '/Resources/gameImages/Token_yellow_split_out.png',
-            }
+
             print MotherPacket['Run']
             print type(MotherPacket['Run'])
 
-            if MotherPacket['In']:
-                ImageColor = TokenIcons[MotherPacket['Group']]
-            else:
-                ImageColor = TokenIcons[str(int(MotherPacket['Group']) + 2)]
-                print self.helpFlip(MotherPacket['Group'])
         else:
             if MotherPacket['Run'] > 5:
                 if MotherPacket['Rating']:
                     WithinTaskRating(self.window, self.path, MotherPacket, both=False)
 
-            TokenIcons = {
-                '0': os.getcwd() + '/Resources/gameImages/Token_blue_you.png',
-                '1': os.getcwd() + '/Resources/gameImages/Token_yellow_you.png'
-            }
-
-            ImageColor = TokenIcons[MotherPacket['Group']]
 
         event.Mouse(visible=False)
-        self.GameIm.setImage(ImageColor)
+        self.GameIm.setImage('/Resources/gameImages/Token_blue_you.png')
         self.GameIm.setAutoDraw(True)
 
         b1.update()
@@ -237,8 +199,6 @@ class Game:
                 Action = b1.cash()
                 b1.box.opacity = 1
                 b1.outcome.setColor(u'green')
-                if MotherPacket['Run'] not in [1,6]:
-                    b1.pumps = float(b1.pumps / 2.0)
 
             if Action or TimerAction:
                 b1.update()
@@ -257,44 +217,27 @@ class Game:
         four conditions.
         '''
         event.Mouse(visible=False)
-        self_icons = {
-            '0': os.getcwd() + '/Resources/gameImages/Token_blue_you.png',
-            '1': os.getcwd() + '/Resources/gameImages/Token_yellow_you.png'
-        }
-        other_icon = {
-            '0': os.getcwd() + '/Resources/gameImages/Token_blue_other.png',
-            '1': os.getcwd() + '/Resources/gameImages/Token_yellow_other.png'
-        }
 
         # balloon instances
         b1 = balloon(self.window, 1, os.getcwd() + '/Resources/Balloons',self.eventRecorder)
         b2 = balloon(self.window, 2, os.getcwd() + '/Resources/Balloons',self.eventRecorder)
 
-        b1.balloon.image = self.balloonColors[MotherPacket['Group']]
-        p1im = self_icons[MotherPacket['Group']]
 
-        if MotherPacket['In']:
-            b2.balloon.image = b1.balloon.image
-            p2im = other_icon[MotherPacket['Group']]
-        else:
-            b2.balloon.image = self.balloonColors[str(self.helpFlip(MotherPacket['Group']))]
-            p2im = other_icon[str(self.helpFlip(MotherPacket['Group']))]
         self.eventRecorder.p1 = b1
         self.eventRecorder.p2 = b2
 
+        P2Icon = visual.ImageStim(win=self.window,
+                                  image='/Resources/gameImages/Token_yellow_other.png',
+                                  pos=[b2.xPos + 0.09, 0.7],
+                                  size=[0.3 * self.aspectRatio, 0.3])
 
-        P2Icon = visual.ImageStim(win = self.window,
-                                image = p2im,
-                                pos = [b2.xPos + 0.09,0.7],
-                                size=[0.3 * self.aspectRatio, 0.3])
+        P1Icon = visual.ImageStim(win=self.window,
+                                  image='/Resources/gameImages/Token_blue_you.png',
+                                  pos=[b1.xPos + 0.09, 0.7],
+                                  size=[0.3 * self.aspectRatio, 0.3])
 
-        P1Icon = visual.ImageStim(win = self.window,
-                                image = p1im,
-                                pos = [b1.xPos + 0.09,0.7],
-                                size=[0.3 * self.aspectRatio, 0.3])
-
-
-        self.RedEx.setText('')
+        b1.Ex.setText('')
+        b2.Ex.setText('')
         # Use subject ID's to generate valid port numbers for subject TCP sockets
         Port = int(1100 + MotherPacket['SubjectID'])
         P2port = int(1100 + MotherPacket['P2_ID'])
@@ -352,7 +295,8 @@ class Game:
         b2.update()
         P2Icon.setAutoDraw(True)
         P1Icon.setAutoDraw(True)
-        self.RedEx.setAutoDraw(True)
+        b1.Ex.setAutoDraw(True)
+        b2.Ex.setAutoDraw(True)
         self.PreTrialSetup(MotherPacket)
         while not BothFinished:
             # Only update screen is something happens
@@ -405,22 +349,16 @@ class Game:
                     b1.box.opacity = 1
                     b1.outcome.setColor(u'green')
                     if b1.cashed and b2.cashed:
-                        self.RedEx.pos = b2.earned.pos
-                        self.RedEx.setText('X')
+                        b2.Ex.setText('X')
                 elif b1.pumps < b2.pumps:
                     b2.box.opacity = 1
                     b2.outcome.setColor(u'green')
                     if b1.cashed and b2.cashed:
-                        self.RedEx.pos = b1.earned.pos
-                        self.RedEx.setText('X')
+                        b.Ex.setText('X')
                 elif b1.pumps == b2.pumps:
                     if b1.cashed and b2.cashed:
-                        b1.box.opacity = 1
-                        b2.box.opacity = 1
-                        b1.pumps = float(b1.pumps / 2.0)
-                        b2.pumps = b1.pumps
-                        b1.outcome.setColor(u'green')
-                        b2.outcome.setColor(u'green')
+                        b1.Ex.setText('X')
+                        b2.Ex.setText('X')
 
 
                 self.eventRecorder.RecordEvent('OutcomeScreen')
@@ -432,16 +370,14 @@ class Game:
             if Action or b2Action:
                 b1.update()
                 b2.update()
-                if MotherPacket['Belief'] and not BothFinished:
-                    self.Cover.draw()
                 self.window.flip()
 
         GameSock.close() # close game TCP socket
         core.wait(np.random.uniform(2,3))
-        self.GameIm.setAutoDraw(False)
         P2Icon.setAutoDraw(False)
         P1Icon.setAutoDraw(False)
-        self.RedEx.setAutoDraw(False)
+        b1.Ex.setAutoDraw(False)
+        b2.Ex.setAutoDraw(False)
         return self.restart
 
 

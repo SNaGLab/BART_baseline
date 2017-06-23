@@ -52,13 +52,13 @@ class balloon:
         # Set balloon color and position
         if player == 1:
             self.xPos = -0.5
-            self.bImage = stimPath + '/YellowBalloonFull.png'
+            self.bImage = stimPath + '/BlueBalloonFull.png'
         elif player == 2:
             self.xPos = 0.5
-            self.bImage = stimPath + '/BlueBalloonFull.png'
+            self.bImage = stimPath + '/YellowBalloonFull.png'
         else:
             self.xPos = 0.0
-            self.bImage = stimPath + '/YellowBalloonFull.png'
+            self.bImage = stimPath + '/BlueBalloonFull.png'
 
         # Visual Stim for the player
         self.aspectRatio = (float(window.size[1]) / float(window.size[0]))
@@ -68,6 +68,12 @@ class balloon:
                                       pos = [self.xPos - 0.10, 0.7],
                                       height = 0.15
                                       )
+
+        self.Ex = visual.TextStim(win=window,
+                            text=' ',
+                            color='red',
+                            pos = [self.xPos - 0.10, 0.7],
+                            height = 0.2)
 
         self.balloon = visual.ImageStim(win = window,
                                         image = self.bImage,

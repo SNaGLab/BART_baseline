@@ -75,11 +75,11 @@ class Instructions:
 
         # use qLib.textField to display maximum balloon rating question
         MaxBelief = textField(window = self.window,drawList=[question],clock = None, label='',
-                                  labelColor='black',maxChars=3,size=.08,text=00,type='int')
+                              labelColor='black',maxChars=3,size=.08,text=00,type='int')
 
         while type(MaxBelief[0][0]) != unicode:    # ensure that response is of acceptable value type
             MaxBelief = textField(window = self.window,drawList=[question],clock = None, label='',
-                              labelColor='black',maxChars=3,size=.08,text=00,type='int')
+                                  labelColor='black',maxChars=3,size=.08,text=00,type='int')
 
         # save maxiumum rating
         with open(self.path+'/MaxRatings.csv',mode = 'a') as MyFile:
@@ -132,27 +132,27 @@ class questions:
 
         # Response fields for questions
         self.Fields = [['Your tokens', 'black', ' ', 8, 'string'],
-                      ["Other player's tokens", 'black', '', 8, 'string']]
+                       ["Other player's tokens", 'black', '', 8, 'string']]
 
     def AskQuestion(self,Question):
 
         event.Mouse(visible=True)
 
         Header = visual.TextStim(win=self.window, height=.08, wrapWidth=1.7,
-                          text="In the following situation, how many tokens would you and the other player receive?",
-                          color='black', pos=[0, .8])
+                                 text="In the following situation, how many tokens would you and the other player receive?",
+                                 color='black', pos=[0, .8])
 
         QuestionText = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text=Question,
-                        color='black', pos=[0, .4])
+                                       color='black', pos=[0, .4])
 
         # Ask subject question and display fields. IF input is not able to be cast as integer, try again
         while 1:
             try:
                 question_canvas = form(window=self.window, size=.08,
-                               drawList=[Header,QuestionText],fields=self.Fields)
+                                       drawList=[Header,QuestionText],fields=self.Fields)
                 answers = [int(question_canvas[0][0]),
                            int(question_canvas[0][1])
-                          ]
+                           ]
                 return answers
             except:
                 visual.TextStim(self.window,text = "Please fill in all fields before submitting the form, and be sure to only use numbers.",color = 'red',height = .08).draw()
@@ -168,17 +168,17 @@ class questions:
         '''
 
         Text1 = visual.TextStim(win=self.window, height=.08, wrapWidth=1.7,
-                          text="You answered incorrectly",
-                          color='red', pos=[0, .8])
+                                text="You answered incorrectly",
+                                color='red', pos=[0, .8])
 
         Text2 = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text='',
-                        color='black', pos=[0, .4])
+                                color='black', pos=[0, .4])
 
         Help = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text="If you are stuck or have a question, please raise your hand and the experimenter will come to you.",
-                        color='black', pos=[0, -0.6])
+                               color='black', pos=[0, -0.6])
 
         Next = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text="press the right key to try again",
-                        color='black', pos=[0, -0.8])
+                               color='black', pos=[0, -0.8])
 
 
         answers = self.AskQuestion(Question)
@@ -215,21 +215,21 @@ class questions:
         does not match integer values, display hint and let them try again.
         '''
         Header = visual.TextStim(win=self.window, height=.08, wrapWidth=1.7,
-                          text="You answered incorrectly",
-                          color='red', pos=[0, .8])
+                                 text="You answered incorrectly",
+                                 color='red', pos=[0, .8])
 
         QuestionText = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text=Question,
-                        color='black', pos=[0, .4])
+                                       color='black', pos=[0, .4])
 
         Next = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text="press the right key to try again",
-                        color='black', pos=[0, -0.8])
+                               color='black', pos=[0, -0.8])
 
         Help = visual.TextStim(win=self.window, wrapWidth=1.7, height=.08, text="If you are stuck or have a question, please raise your hand and the experimenter will come to you.",
-                        color='black', pos=[0, -0.6])
+                               color='black', pos=[0, -0.6])
 
         question_canvas = choice(window=self.window,
-                         drawList=[QuestionText],
-                         labels=['True', 'False'], labelColor='black')
+                                 drawList=[QuestionText],
+                                 labels=['True', 'False'], labelColor='black')
 
         event.Mouse(visible=False)
         while question_canvas[0] != CorrectAnswers:
@@ -246,8 +246,8 @@ class questions:
             QuestionText.setText(Question)
             Header.setColor('black')
             question_canvas = choice(window=self.window,
-                             drawList=[QuestionText],
-                             labels=['True', 'False'], labelColor='black')
+                                     drawList=[QuestionText],
+                                     labels=['True', 'False'], labelColor='black')
 
 
         Header.setText('You answered correctly')
@@ -261,13 +261,13 @@ class questions:
         event.waitKeys(['right'])
 
 
-def Run_AllIntro(MyWin, path, group,skip):
+def Run_AllIntro(MyWin, path,skip):
     '''
     Runs all pieces of the introduction of experiment
     '''
     Instruct = Instructions(MyWin, path)
     if skip not in ['all','tutorial']:
-        Tutorial.run_Tutorial(MyWin,group)  # Run the tutorial
+        Tutorial.run_Tutorial(MyWin)  # Run the tutorial
 
     if skip != 'all':
         Questions = questions('/Users/JMP/Desktop/',MyWin)
@@ -287,7 +287,7 @@ def Run_AllIntro(MyWin, path, group,skip):
         vid = visual.MovieStim3(MyWin, os.getcwd() +'/Resources/dist_vid.mp4', size=[700, 400], pos=[0, -150])
         distIm = visual.ImageStim(MyWin, os.getcwd() + '/Resources/DistImage.png',size=[0.8,0.8], pos=[0,-.5])
         bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
-                                            "The scale below represents the size of a balloon from 0 pumps (leftmost column) to your estimated maximum balloon size (rightmost column). Each column represents a slightly larger balloon. \nAt what size do you think the balloons in this task are most likely to pop? You can place a bet by tapping one of the columns with your cursor."
+                                          "The scale below represents the size of a balloon from 0 pumps (leftmost column) to your estimated maximum balloon size (rightmost column). Each column represents a slightly larger balloon. \nAt what size do you think the balloons in this task are most likely to pop? You can place a bet by tapping one of the columns with your cursor."
                                           ,True)
         bButton.buttonwait(extras=[distIm])
 

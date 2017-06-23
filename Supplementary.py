@@ -30,32 +30,31 @@ def pickleEditAndDump(key,value,pathtopickle):
     pickle.dump(otherInfo,pklFile)
     pklFile.close()
 
-def WithinTaskRating(window, path, MotherPacket, both = True):
+
+def WithinTaskRating(window, path, MotherPacket, both=True):
     fixation = visual.TextStim(win=window,
                                text='+',
                                color='black',
                                )
 
-    question = visual.TextStim(win = window,height = .08,wrapWidth=1.5,
-                               text =('What do you believe is the maximum balloon size?'
-                                      '\n\nPlease respond in number of pumps.'),
-                               color = 'black',pos=[0,.3])
+    question = visual.TextStim(win=window, height=.08, wrapWidth=1.5,
+                               text=('What do you believe is the maximum balloon size?'
+                                     '\n\nPlease respond in number of pumps.'),
+                               color='black', pos=[0, .3])
 
     # use qLib.textField to display maximum balloon rating question
-    MaxBelief = textField(window = window,drawList=[question],clock = None, label='',
-                              labelColor='black',maxChars=3,size=.08,text=00,type='int')
+    MaxBelief = textField(window=window, drawList=[question], clock=None, label='',
+                          labelColor='black', maxChars=3, size=.08, text=00, type='int')
 
-    while type(MaxBelief[0][0]) != unicode:    # ensure that response is of acceptable value type
-        MaxBelief = textField(window = window,drawList=[question],clock = None, label='',
-                          labelColor='black',maxChars=3,size=.08,text=00,type='int')
+    while type(MaxBelief[0][0]) != unicode:  # ensure that response is of acceptable value type
+        MaxBelief = textField(window=window, drawList=[question], clock=None, label='',
+                              labelColor='black', maxChars=3, size=.08, text=00, type='int')
 
-    with open(path+'/MaxRatings.csv',mode = 'a') as MyFile:
+    with open(path + '/MaxRatings.csv', mode='a') as MyFile:
         MyFile.write(str(MotherPacket['Run']) + ',' + str(MaxBelief[0][0]) + '\n')
 
-    
-
     Text = "Out of 50 balloons, where do you think the balloon is likely to pop? Placing more bets in a column will indicate that you think more balloons will pop at that size. You must place 50 bets to continue."
-    bars = Distributor(window,int(MaxBelief[0][0]),Text).initialize()
+    bars = Distributor(window, int(MaxBelief[0][0]), Text).initialize()
     bars.append(MotherPacket['Run'])
     bars.append(MotherPacket['In'])
     bars.append('pop')
@@ -75,15 +74,16 @@ def WithinTaskRating(window, path, MotherPacket, both = True):
                 GroupText = 'the yellow group'
             else:
                 GroupText = 'the blue group'
-        Text = "In this block you will play with other participants from %s.\n\nOut of 50 balloons, where do you think the other participants from %s are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants in %s are more likely to pump to that value and cash in. You must place 50 bets to continue."%(GroupText,GroupText,GroupText)
-        bars = Distributor(window,int(MaxBelief[0][0]),Text).initialize()
+        Text = "In this block you will play with other participants from %s.\n\nOut of 50 balloons, where do you think the other participants from %s are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants in %s are more likely to pump to that value and cash in. You must place 50 bets to continue." % (
+        GroupText, GroupText, GroupText)
+        bars = Distributor(window, int(MaxBelief[0][0]), Text).initialize()
         bars.append(MotherPacket['Run'])
         bars.append(MotherPacket['In'])
         bars.append('social')
 
-        with open(path+'/DistRatings.csv',mode = 'a') as MyFile:
+        with open(path + '/DistRatings.csv', mode='a') as MyFile:
             X = ','.join(str(e) for e in bars)
-            MyFile.write('%s\n'%X)
+            MyFile.write('%s\n' % X)
 
     window.flip()
     fixation.draw()

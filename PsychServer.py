@@ -9,8 +9,7 @@ import datetime
 from qLib2.qLib import *
 from psychopy import visual, core, event, gui
 import payment_methods
-import simplecrypt
-from encryptBART import encryptBART
+
 
 
 def DS_cleaner(FilePath):
@@ -148,13 +147,12 @@ class row:
         self.Soc.setText(str(int(StateInfo.CountSocial)))
         self.Alone.setText(str(int(StateInfo.CountAlone)))
         
-        col = u'blue' if int(SessInfo.Group) == 0 else u'yellow'
         if StateInfo.Available:
-            self.AvailableBox.fillColor = col
+            self.AvailableBox.fillColor = u'black'
         else:
             self.AvailableBox.fillColor = None
         if StateInfo.Send:
-            self.WaitingBox.fillColor = col
+            self.WaitingBox.fillColor = u'black'
         else:
             self.WaitingBox.fillColor = None
 
@@ -215,13 +213,13 @@ class Server():
         while (str(Subnum) in os.listdir(os.getcwd() + '/Data')) or (Subnum in self.SessionFrame.index):
             Subnum = int(np.random.randint(1, 120))
 
-        # split message to get group and contactID
-        group, contactID,compNum = message.split('-')
+        # split message to get contactID
+        contactID,compNum = message.split('-')
 
         # add subject to Session DataFrame
         self.SessionFrame.loc[Subnum] = [Subnum, player[0], int(player[1]),
                                          self.Session, 1, 0, 'Single Player',
-                                         False, False, 0, 0, 0, False, group,contactID,compNum]
+                                         0, 0, 0, False,contactID,compNum]
         logging.debug(getTime() + ': Player %s: self.SessionFrame row added' % Subnum)
 
         # add subject to subject state dataframe
@@ -255,7 +253,7 @@ class Server():
         '''
         logging.debug(getTime() + ': Player %s: checking run' % sub)
         if self.WorldClock.getTime() <= 0:
-            if self.SessionFrame.loc[sub, 'Run'] == len(self.RunList) + 1:  # if last run of experiment
+            if self.SessionFrame.loc[sub, 'Run'] == 6:  # if last run of experiment
                 self.StateFrame.loc[sub, 'Playing'] = 'Done'
                 logging.debug(getTime() + ': Player %s: set players playing to Done' % sub)
             else:  # otherwise go to break
@@ -349,15 +347,11 @@ class Server():
 
             AvailableInRunFrame = AvailableSession[(AvailableSession.Run == p1_info.Run) &
                                                    (AvailableSession.SubjectID != p1_info.SubjectID) &
-                                                   (AvailableSession.SubjectID != p1_info.P2_ID)]
+                                                   (AvailableSession.SubjectID != p1_info.P2_ID)].index
 
-            if p1_info.In:
-                AvailableInRun_index = AvailableInRunFrame[AvailableInRunFrame.Group == p1_info.Group].index
-            else:
-                AvailableInRun_index = AvailableInRunFrame[AvailableInRunFrame.Group != p1_info.Group].index
 
-            if len(AvailableInRun_index) > 0:
-                AvailableInRun = Available.loc[AvailableInRun_index]
+            if len(AvailableInRunFrame) > 0:
+                AvailableInRun = Available.loc[AvailableInRunFrame]
 
                 p2 = np.random.choice(AvailableInRun.index)
                 p2_info = self.SessionFrame.loc[p2]
@@ -415,9 +409,8 @@ class Server():
                     self.StateFrame.loc[sub, 'CountAlone'] = 0
                     self.SessionFrame.loc[sub, 'Run'] += 1
                     self.SessionFrame.loc[sub, 'Rating'] = True
-                    
-                    self.SessionFrame.loc[sub, ['Belief', 'In']] = self.RunList[
-                        int(self.SessionFrame.loc[sub, 'Run']) - 2]
+
+
                     self.setSinglePlayer(sub)
                     MotherPacket = pickle.dumps(self.SessionFrame.loc[sub].to_dict())
 
@@ -496,25 +489,10 @@ class Server():
 
         self.Session = int(sessionField[0][0])
 
-        if self.Session % 2 == 0:
-            self.RunList = [
-                (True, False),
-                (False, True),
-                (False, False),
-                (True, True),
-                (False,False)
-            ]
-        else:
-            self.RunList = [
-                (True, True),
-                (False, False),
-                (False, True),
-                (True, False),
-                (False,False)
-            ]
+
         self.SessionFrame = pd.DataFrame(
             columns=['SubjectID', 'IP', 'PORT', 'Session', 'Run', 'Trial',
-                     'Game', 'Belief', 'In', 'P2_ID', 'P2_IP', 'P2_PORT', 'Rating', 'Group','ContactID','Computer'])
+                     'Game', 'P2_ID', 'P2_IP', 'P2_PORT', 'Rating', 'ContactID','Computer'])
 
         self.StateFrame = pd.DataFrame(columns=['Available', 'Playing',
                                            'CountSocial', 'CountAlone',

@@ -8,16 +8,18 @@ import Instructions
 from shutil import move
 from Supplementary import orange_white,risk_ambiguity_scale
 import webbrowser
+from Coin_distributor import Distributor
+
 
 savePath = os.path.expanduser('~') + '/Desktop/Temp'
 
 # Set up UDP socket for communication with server
 gamesock = socket(AF_INET,SOCK_DGRAM)
-Mother = ('10.201.215.144',11111) #server's (IP,port)
+Mother = ('10.201.192.217',11111) #server's (IP,port)
 
 
 # Initial display to screen to see if subject is restarting
-expInfo = {'Computer':'','Team':'','Restart?': 'No','ContactID':'','skipIntro':'No'}
+expInfo = {'Computer':'','Restart?': 'No','ContactID':'','skipIntro':'No'}
 dlg = gui.DlgFromDict(dictionary=expInfo)
 if dlg.OK is False:
     core.quit()
@@ -30,29 +32,25 @@ window = visual.Window(
 # Set up data_handler method and game class instance
 eventRecorder = Data_Handler(savePath)
 games = Game(window, savePath, eventRecorder)
+
 if expInfo['Restart?'] != 'No':
     restart = True
 
-else:
-    if expInfo['skipIntro'] != 'No':
+else: # dont want to restart (broke during tutorial)
+    if expInfo['skipIntro'] == 'No': # do want to skip intro
         if 'Temp' in os.listdir(os.path.expanduser('~') + '/Desktop'):
             shutil.rmtree(savePath)
+            print 'here'
+            os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
+            restart = False
 
-        os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
-        restart = False
-
-    # Tutorial, quiz and initial ratings
-    if expInfo['Team'] in ['blue', 'Blue']:
-        group = '0'
-    else:
-        group = '1'
-    Instructions.Run_AllIntro(window, savePath, group,expInfo['skipIntro'])
+    Instructions.Run_AllIntro(window, savePath,expInfo['skipIntro'])
     games.window.flip()
     # Wait for main experiment to begin and tell server ready to play.
     visual.TextStim(win = window, text = 'Please wait while all participants ' +
                     'complete the instructions.\n\nThe game will begin shortly.').draw()
     games.window.flip()
-    gamesock.sendto(group+'-'+expInfo['ContactID']+'-'+expInfo['Computer'],Mother)
+    gamesock.sendto(expInfo['ContactID']+'-'+expInfo['Computer'],Mother)
     gamesock.setblocking(1)
     # When task begins server sends the subject their ID.
     SubjID = gamesock.recvfrom(100)[0]

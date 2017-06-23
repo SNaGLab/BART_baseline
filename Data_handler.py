@@ -13,11 +13,8 @@ class Data_Handler:
 
     def __init__(self, FilePath, p1 = None, p2 = None):
         self.headerMade = False
-        self.Group = 0
         self.Session = 0        # The Session that the subject is in
         self.SubjectID = 0      # Subject ID
-        self.Belief = 0          # Social belief or no
-        self.In = 0            # In group or outgroup play
         self.Run = 1            # Run that subject is in
         self.Game = 0           # 0 = Alone, 1 = Comp
         self.Trial = 1          # Trial number for specific game
@@ -29,9 +26,6 @@ class Data_Handler:
         self.clock = core.Clock()
         self.Header = ['Session',
                   'SubjectID',
-                  'Group',
-                  'Belief',
-                  'In',
                   'Run',
                   'Game',
                   'Trial',
@@ -77,9 +71,6 @@ class Data_Handler:
         row[self.Header.index('TimeOnset')] = self.clock.getTime()
         row[self.Header.index('Session')] = self.Session
         row[self.Header.index('SubjectID')] = self.SubjectID
-        row[self.Header.index('Group')] = self.Group
-        row[self.Header.index('Belief')] = self.Belief
-        row[self.Header.index('In')] = self.In
         row[self.Header.index('Run')] = self.Run
         row[self.Header.index('Game')] = self.Game
         row[self.Header.index('Trial')] = self.Trial
@@ -96,7 +87,7 @@ class Data_Handler:
         if event == 'OutcomeScreen':
             # Determine winner of trial
             if self.Game == 'MultiPlayer' or self.Game == 'Learning Multi Rules':
-                if (self.p1.pumps >= self.p2.pumps) and not self.p1.popped:
+                if (self.p1.pumps > self.p2.pumps) and not self.p1.popped:
                     row[self.Header.index('Winner')] = 1
 
             else:
@@ -118,8 +109,6 @@ class Data_Handler:
         print MotherPacket
         self.Session = MotherPacket['Session']
         self.SubjectID = MotherPacket['SubjectID']
-        self.Belief = 1 if MotherPacket['Belief'] else 0
-        self.In = 1 if MotherPacket['In'] else 0
         self.Run = MotherPacket['Run']
         if MotherPacket['Game'] == 'MultiPlayer':
             self.Game = 1
@@ -129,6 +118,5 @@ class Data_Handler:
             self.Game = 0
         self.Trial = MotherPacket['Trial']
         self.P2 = MotherPacket['P2_ID']
-        self.Group = MotherPacket['Group']
         if not self.headerMade:
             self.MakeHeader()
