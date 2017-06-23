@@ -52,13 +52,16 @@ class balloon:
         # Set balloon color and position
         if player == 1:
             self.xPos = -0.5
-            self.bImage = stimPath + '/BlueBalloonFull.png'
+            self.bImage = stimPath + '/Balloons/BlueBalloonFull.png'
+            self.tokenImage = stimPath + '/gameImages/Token_blue_you.png'
         elif player == 2:
             self.xPos = 0.5
-            self.bImage = stimPath + '/YellowBalloonFull.png'
+            self.bImage = stimPath + '/Balloons/YellowBalloonFull.png'
+            self.tokenImage = stimPath + '/gameImages/Token_yellow_other.png'
         else:
             self.xPos = 0.0
-            self.bImage = stimPath + '/BlueBalloonFull.png'
+            self.bImage = stimPath + '/Balloons/BlueBalloonFull.png'
+            self.tokenImage = stimPath + '/gameImages/Token_blue_you.png'
 
         # Visual Stim for the player
         self.aspectRatio = (float(window.size[1]) / float(window.size[0]))
@@ -80,6 +83,11 @@ class balloon:
                                         pos = [self.xPos, 0.0],
                                         size = (0.05 * self.aspectRatio, 0.05)
                                         )
+
+        self.Token = visual.ImageStim(win=window,
+                                      image= self.tokenImage,
+                                      pos=[self.xPos + 0.09, 0.7],
+                                      size=[0.3 * self.aspectRatio, 0.3])
 
         self.outcome = visual.TextStim(win = window,
                                        text = '',
@@ -110,6 +118,7 @@ class balloon:
         if self.cashed:
             self.box.draw()
         self.earned.draw()
+        self.Token.draw()
 
 
 
@@ -123,6 +132,7 @@ class balloon:
         self.timedOut = False
         self.done = False
         self.outcome.setText('')
+        self.Ex.setText('')
         self.outcome.setColor(u'black')
         if self.player < 2:
             self.max = np.random.choice(range(1,65))

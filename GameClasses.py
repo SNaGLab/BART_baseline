@@ -154,22 +154,17 @@ class Game:
         '''
         # balloon instance
 
-
-        b1 = balloon(self.window, 0, os.getcwd() + '/Resources/Balloons',self.eventRecorder)
+        b1 = balloon(self.window, 0, os.getcwd() + '/Resources',self.eventRecorder)
         self.eventRecorder.p1 = b1
         self.eventRecorder.p2 = None
         # Get Trial ready
         b1.reset()
-
         self.PreTrialSetup(MotherPacket)
+
         if int(MotherPacket['Run']) in [2,3,4,5]:
             # If subject must make a belief rating, allow them to do so
             if MotherPacket['Rating']:
                 WithinTaskRating(self.window, self.path, MotherPacket)
-
-
-            print MotherPacket['Run']
-            print type(MotherPacket['Run'])
 
         else:
             if MotherPacket['Run'] > 5:
@@ -178,16 +173,13 @@ class Game:
 
 
         event.Mouse(visible=False)
-        self.GameIm.setImage('/Resources/gameImages/Token_blue_you.png')
-        self.GameIm.setAutoDraw(True)
 
         b1.update()
         self.window.flip()
 
         while not b1.done:
             Action = False     # Only update screen if something happens
-            TimerAction = False # If Timer updates or timedOut
-            # Check if player has timed out
+
             TimerAction = b1.timeOut(world = self.TrialTimer)
 
 
@@ -206,8 +198,7 @@ class Game:
 
         self.eventRecorder.RecordEvent('OutcomeScreen')
         core.wait(2)
-        self.GameIm.setAutoDraw(False)
-        
+
         return self.restart # If there are no errors, return False
 
 
@@ -219,25 +210,13 @@ class Game:
         event.Mouse(visible=False)
 
         # balloon instances
-        b1 = balloon(self.window, 1, os.getcwd() + '/Resources/Balloons',self.eventRecorder)
-        b2 = balloon(self.window, 2, os.getcwd() + '/Resources/Balloons',self.eventRecorder)
+        b1 = balloon(self.window, 1, os.getcwd() + '/Resources',self.eventRecorder)
+        b2 = balloon(self.window, 2, os.getcwd() + '/Resources',self.eventRecorder)
 
 
         self.eventRecorder.p1 = b1
         self.eventRecorder.p2 = b2
 
-        P2Icon = visual.ImageStim(win=self.window,
-                                  image='/Resources/gameImages/Token_yellow_other.png',
-                                  pos=[b2.xPos + 0.09, 0.7],
-                                  size=[0.3 * self.aspectRatio, 0.3])
-
-        P1Icon = visual.ImageStim(win=self.window,
-                                  image='/Resources/gameImages/Token_blue_you.png',
-                                  pos=[b1.xPos + 0.09, 0.7],
-                                  size=[0.3 * self.aspectRatio, 0.3])
-
-        b1.Ex.setText('')
-        b2.Ex.setText('')
         # Use subject ID's to generate valid port numbers for subject TCP sockets
         Port = int(1100 + MotherPacket['SubjectID'])
         P2port = int(1100 + MotherPacket['P2_ID'])
@@ -293,8 +272,7 @@ class Game:
         b2.reset()
         b1.update()
         b2.update()
-        P2Icon.setAutoDraw(True)
-        P1Icon.setAutoDraw(True)
+
         b1.Ex.setAutoDraw(True)
         b2.Ex.setAutoDraw(True)
         self.PreTrialSetup(MotherPacket)
@@ -374,8 +352,6 @@ class Game:
 
         GameSock.close() # close game TCP socket
         core.wait(np.random.uniform(2,3))
-        P2Icon.setAutoDraw(False)
-        P1Icon.setAutoDraw(False)
         b1.Ex.setAutoDraw(False)
         b2.Ex.setAutoDraw(False)
         return self.restart
