@@ -87,39 +87,37 @@ class Instructions:
         return int(MaxBelief[0][0])
 
     def dists(self,Max,type):
-        ticks = [0] + [' ' for _ in range(18)] + [Max] # tick labels for X axis
+        '''
+                Display distribution ratings
 
-        if 'DistRatings.csv' not in os.listdir(self.path):
-            with open(self.path+'/DistRatings.csv',mode = 'a') as MyFile:
-                X = ','.join(str(e) for e in [str(i) for i in range(5,105,5) + ['run','type']])
-                MyFile.write('%s\n'%X)
+                Type: 0 is for first distribution which asks for pop point estimation
+                      1 is for second distriubtion which asks about other peoples' behavior.
+                Max: the subject's predicted upper range, taken from Instruction.MaxRating.
+                '''
 
-            Text = "Out of at least 100 balloons, where do you think any balloon is likely to pop? A higher number for a bar will indicate that you think more balloons will pop at that size."
+        event.Mouse(visible=True)
+
+        if Type == 0:
+            # Only on first distribution call make header
+            with open(self.path + '/DistRatings.csv', mode='a') as MyFile:
+                X = ','.join(str(e) for e in [str(i) for i in range(10, 110, 10) + ['run', 'type']])
+                MyFile.write('%s\n' % X)
+
+            Text = "Out of 50 balloons, where do you think the balloon is likely to pop? Placing more bets in a column will indicate that you think more balloons will pop at that size. You must place 50 bets to continue."
         else:
-            Text = "Out of at least 100 balloons, where do you think the other participants in today's session are likely to 'cash in'? A higher number for a bar will indicate that you think the other participants in today's session are more likely to pump to that value and cash in"
-
-        barsText = visual.TextStim(win=self.window,
-                                   height=.06,
-                                   wrapWidth=1.9,
-                                   color='black',
-                                   pos=[0, .85],
-                                   text=Text)
+            Text = "Out of 50 balloons, where do you think the other participants in today's session are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants in today's session are more likely to pump to that value and cash in. You must place 50 bets to continue."
 
         # Distribution to be drawn from qLib.distribution
-        bars = Distribution(window=self.window,
-                            drawList=[barsText],
-                            limits=[0, 100],
-                            labels=ticks,
-                            nBars=20,
-                            defaultHeight=[1 for f in range(20)],
-                            MaxVal=100,
-                            width=.9,
-                            h=.06)
-        bars[2].append(1)
-        bars[2].append(type)
-        with open(self.path+'/DistRatings.csv',mode = 'a') as MyFile:
-            X = ','.join(str(e) for e in bars[2])
-            MyFile.write('%s\n'%X)
+        bars = Distributor(self.window, Max, Text).initialize()
+        bars.append(1)
+        if type == 0:
+            bars.append('pop')
+        else:
+            bars.append('soc')
+        with open(self.path + '/DistRatings.csv', mode='a') as MyFile:
+            X = ','.join(str(e) for e in bars)
+            MyFile.write('%s\n' % X)
+
 
 class questions:
     '''

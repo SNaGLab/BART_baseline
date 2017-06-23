@@ -42,79 +42,42 @@ def WithinTaskRating(window, path, MotherPacket, both=True):
                                      '\n\nPlease respond in number of pumps.'),
                                color='black', pos=[0, .3])
 
-
     # use qLib.textField to display maximum balloon rating question
     MaxBelief = textField(window=window, drawList=[question], clock=None, label='',
                           labelColor='black', maxChars=3, size=.08, text=00, type='int')
+
     while type(MaxBelief[0][0]) != unicode:  # ensure that response is of acceptable value type
         MaxBelief = textField(window=window, drawList=[question], clock=None, label='',
                               labelColor='black', maxChars=3, size=.08, text=00, type='int')
 
-    ticks = [0] + [' ' for _ in range(18)] + [MaxBelief[0][0]] # tick labels for X axis
-
     with open(path + '/MaxRatings.csv', mode='a') as MyFile:
         MyFile.write(str(MotherPacket['Run']) + ',' + str(MaxBelief[0][0]) + '\n')
 
-    Text = "Out of at least 100 balloons, where do you think any balloon is likely to pop? A higher number for a bar will indicate that you think more balloons will pop at that size."
-
-    barsText = visual.TextStim(win=self.window,
-                               height=.06,
-                               wrapWidth=1.9,
-                               color='black',
-                               pos=[0, .85],
-                               text=Text)
-
-    # Distribution to be drawn from qLib.distribution
-    bars = Distribution(window=self.window,
-                        drawList=[barsText],
-                        limits=[0, 100],
-                        labels=ticks,
-                        nBars=20,
-                        defaultHeight=[1 for f in range(20)],
-                        MaxVal=100,
-                        width=.9,
-                        h=.06)
-
-    bars[2].append(MotherPacket['Run'])
-    bars[2].append('pop')
+    Text = "Out of 50 balloons, where do you think the balloon is likely to pop? Placing more bets in a column will indicate that you think more balloons will pop at that size. You must place 50 bets to continue."
+    bars = Distributor(window, int(MaxBelief[0][0]), Text).initialize()
+    bars.append(MotherPacket['Run'])
+    bars.append('pop')
 
     with open(path + '/DistRatings.csv', mode='a') as MyFile:
-        X = ','.join(str(e) for e in bars[2])
+        X = ','.join(str(e) for e in bars)
         MyFile.write('%s\n' % X)
 
     if both:
 
-        Text = "In the next trial you will play with another participant. Out of at least 100 balloons, where do you think the other participant is likely to 'cash in'? A higher number for a bar will indicate that you think the other participant is more likely to pump to that value and cash in"
-
-        barsText = visual.TextStim(win=self.window,
-                                   height=.06,
-                                   wrapWidth=1.9,
-                                   color='black',
-                                   pos=[0, .85],
-                                   text=Text)
-
-        # Distribution to be drawn from qLib.distribution
-        bars = Distribution(window=self.window,
-                            drawList=[barsText],
-                            limits=[0, 100],
-                            labels=ticks,
-                            nBars=20,
-                            defaultHeight=[1 for f in range(20)],
-                            MaxVal=100,
-                            width=.9,
-                            h=.06)
-
-        bars[2].append(MotherPacket['Run'])
-        bars[2].append('social')
+        Text = "In this block you will play with another participant.\n\nOut of 50 balloons, where do you think the other participant is likely to 'cash in'? Placing more bets in a column will indicate that you think the other participant is more likely to pump to that value and cash in. You must place 50 bets to continue."
+        bars = Distributor(window, int(MaxBelief[0][0]), Text).initialize()
+        bars.append(MotherPacket['Run'])
+        bars.append('soc')
 
         with open(path + '/DistRatings.csv', mode='a') as MyFile:
-            X = ','.join(str(e) for e in bars[2])
+            X = ','.join(str(e) for e in bars)
             MyFile.write('%s\n' % X)
 
     window.flip()
     fixation.draw()
     window.flip()
     core.wait(1.2)
+
 
 def orange_white(window,path):
     '''
