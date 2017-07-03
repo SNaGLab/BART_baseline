@@ -154,8 +154,8 @@ class balloon:
         Allows player to press or hold pump button to pump balloon.
         Returns bool for whether action was made.
         '''
-        # if np.random.randint(0,1000000) < 100 and not self.done:   # FOR AUTO PUMP
-        if self.keyState[key.SPACE] and not self.done: # if key is down and not done
+        if np.random.randint(0,1000000) < 100 and not self.done:   # FOR AUTO PUMP
+        # if self.keyState[key.SPACE] and not self.done: # if key is down and not done
             if self.FirstPump: # hold for an initial 500ms before rapid pumping
                 self.firstTime = self.pumpTimer.getTime()
                 self.pump()

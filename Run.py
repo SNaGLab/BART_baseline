@@ -15,7 +15,7 @@ savePath = os.path.expanduser('~') + '/Desktop/Temp'
 
 # Set up UDP socket for communication with server
 gamesock = socket(AF_INET,SOCK_DGRAM)
-Mother = ('10.201.192.217',11111) #server's (IP,port)
+Mother = ('10.201.193.116',11111) #server's (IP,port)
 
 
 # Initial display to screen to see if subject is restarting
@@ -42,8 +42,8 @@ else: # dont want to restart (broke during tutorial)
         if 'Temp' in os.listdir(os.path.expanduser('~') + '/Desktop'):
             shutil.rmtree(savePath)
             print 'here'
-            os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
-            restart = False
+        os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
+    restart = False
 
     Instructions.Run_AllIntro(window, savePath,expInfo['skipIntro'],expInfo['Competitive'])
     games.window.flip()
