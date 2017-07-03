@@ -299,6 +299,9 @@ class Game:
                 b2.pumps = 0
                 self.eventRecorder.RecordEvent('P2_Pop')
                 b2.popped = True
+                b2.earned.setText('0')
+                b2.outcome.setText('Popped!')
+                b2.outcome.setColor(u'red')
                 b2.done = True
                 b2Action = True
             elif Message == '2':

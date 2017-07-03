@@ -65,7 +65,7 @@ def WithinTaskRating(window, path, MotherPacket, both=True):
 
     if both:
 
-        Text = "In this block you will play with other participants.\n\nOut of 50 balloons, where do you think the other participants are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants are more likely to pump to that value and cash in. You must place 50 bets to continue."
+        Text = "Out of 50 balloons, where do you think the other participants are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants are more likely to pump to that value and cash in. You must place 50 bets to continue."
 
         bars = Distributor(window, int(MaxBelief[0][0]), Text).initialize()
         bars.append(MotherPacket['Run'])

@@ -42,7 +42,7 @@ else: # dont want to restart (broke during tutorial)
         if 'Temp' in os.listdir(os.path.expanduser('~') + '/Desktop'):
             shutil.rmtree(savePath)
             print 'here'
-        os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
+    os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
     restart = False
 
     Instructions.Run_AllIntro(window, savePath,expInfo['skipIntro'],expInfo['Competitive'])

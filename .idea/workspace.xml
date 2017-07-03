@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1ac4d9c-1b62-4b1e-b23d-9ba05b6b64ac" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Balloon.py" afterPath="$PROJECT_DIR$/Balloon.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/BART_baseline_contacts.numbers" afterPath="$PROJECT_DIR$/BART_baseline_contacts.numbers" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameClasses.py" afterPath="$PROJECT_DIR$/GameClasses.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PsychServer.py" afterPath="$PROJECT_DIR$/PsychServer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Run.py" afterPath="$PROJECT_DIR$/Run.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Supplementary.py" afterPath="$PROJECT_DIR$/Supplementary.py" />
     </list>
     <ignored path="BART_baseline.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,41 +27,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Instructions.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Instructions.py">
+      <file leaf-file-name="payment_methods.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/payment_methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
-              <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+            <state relative-caret-position="532">
+              <caret line="235" column="47" selection-start-line="235" selection-start-column="47" selection-end-line="235" selection-end-column="47" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Balloon.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Balloon.py">
+      <file leaf-file-name="PsychServer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PsychServer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="158" column="38" selection-start-line="158" selection-start-column="38" selection-end-line="158" selection-end-column="38" />
+            <state relative-caret-position="-3480">
+              <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GameClasses.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GameClasses.py">
+      <file leaf-file-name="Supplementary.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Supplementary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="357" column="15" selection-start-line="357" selection-start-column="15" selection-end-line="357" selection-end-column="15" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Run.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Run.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="45" column="19" selection-start-line="45" selection-start-column="19" selection-end-line="45" selection-end-column="19" />
+            <state relative-caret-position="300">
+              <caret line="63" column="32" selection-start-line="63" selection-start-column="32" selection-end-line="63" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -74,17 +66,17 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/../S_BART.0.3/GameClasses.py" />
-        <option value="$PROJECT_DIR$/PsychServer.py" />
         <option value="$PROJECT_DIR$/payment_methods.py" />
         <option value="$PROJECT_DIR$/Data_handler.py" />
-        <option value="$PROJECT_DIR$/Supplementary.py" />
         <option value="$PROJECT_DIR$/../S_BART.0.3/Supplementary.py" />
         <option value="$PROJECT_DIR$/Tutorial.py" />
         <option value="$PROJECT_DIR$/Instructions.py" />
         <option value="$PROJECT_DIR$/instruction_quests 2.json" />
         <option value="$PROJECT_DIR$/Balloon.py" />
-        <option value="$PROJECT_DIR$/GameClasses.py" />
         <option value="$PROJECT_DIR$/Run.py" />
+        <option value="$PROJECT_DIR$/GameClasses.py" />
+        <option value="$PROJECT_DIR$/Supplementary.py" />
+        <option value="$PROJECT_DIR$/PsychServer.py" />
       </list>
     </option>
   </component>
@@ -95,8 +87,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="414" />
-    <option name="y" value="27" />
+    <option name="x" value="1651" />
+    <option name="y" value="149" />
     <option name="width" value="1366" />
     <option name="height" value="741" />
   </component>
@@ -384,7 +376,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="414" y="27" width="1366" height="741" extended-state="0" />
+    <frame x="1651" y="149" width="1366" height="741" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11858006" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -625,20 +617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/payment_methods.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="182" column="53" selection-start-line="182" selection-start-column="53" selection-end-line="182" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/PsychServer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3705">
-          <caret line="257" column="80" selection-start-line="257" selection-start-column="80" selection-end-line="257" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Data_handler.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-870">
@@ -681,17 +659,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Supplementary.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-165">
-          <caret line="15" column="15" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/instruction_quests 2.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Balloon.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="199" column="12" selection-start-line="199" selection-start-column="12" selection-end-line="200" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/encryptBART.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="9" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -703,26 +690,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Balloon.py">
+    <entry file="file://$PROJECT_DIR$/payment_methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="158" column="38" selection-start-line="158" selection-start-column="38" selection-end-line="158" selection-end-column="38" />
+        <state relative-caret-position="532">
+          <caret line="235" column="47" selection-start-line="235" selection-start-column="47" selection-end-line="235" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PsychServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3480">
+          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GameClasses.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="357" column="15" selection-start-line="357" selection-start-column="15" selection-end-line="357" selection-end-column="15" />
+        <state relative-caret-position="465">
+          <caret line="38" column="56" selection-start-line="38" selection-start-column="56" selection-end-line="38" selection-end-column="56" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="45" column="19" selection-start-line="45" selection-start-column="19" selection-end-line="45" selection-end-column="19" />
+        <state relative-caret-position="-98">
+          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Supplementary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="63" column="32" selection-start-line="63" selection-start-column="32" selection-end-line="63" selection-end-column="32" />
           <folding />
         </state>
       </provider>

@@ -9,6 +9,7 @@ import datetime
 from qLib2.qLib import *
 from psychopy import visual, core, event, gui
 import payment_methods
+from encryptBART import encryptBART
 
 
 
@@ -253,7 +254,7 @@ class Server():
         '''
         logging.debug(getTime() + ': Player %s: checking run' % sub)
         if self.WorldClock.getTime() <= 0:
-            if self.SessionFrame.loc[sub, 'Run'] == 7:  # if last run of experiment
+            if self.SessionFrame.loc[sub, 'Run'] == 6:  # if last run of experiment
                 self.StateFrame.loc[sub, 'Playing'] = 'Done'
                 logging.debug(getTime() + ': Player %s: set players playing to Done' % sub)
             else:  # otherwise go to break
