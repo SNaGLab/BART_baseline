@@ -1,0 +1,14 @@
+[
+    ["1. The other player pops his balloon at 20 tokens and you cash in at 16 tokens.",
+    [16,0],
+    "Popping your balloon results in the loss of all of your tokens. Cashing in saves all of the tokens that you have accumulated."
+    ],
+    ["2. You cash in at 25 tokens and the other player cashes in at 30 tokens.",
+    [25,30],
+    "Your balloon is completely separate from the other player's. Their behavior has no affect on your outcomes."
+    ],
+    ["4. Every balloon can have a different pop point.",
+    0,
+    "Every balloon in this experiment can have a different pop point. All balloons are drawn from the same range."
+    ]
+]

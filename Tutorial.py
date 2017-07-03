@@ -90,7 +90,7 @@ class InstructionBox:
             self.window.flip()
 
 
-def run_Tutorial(window):
+def run_Tutorial(window, competitive):
     '''
     Runs all elements of the tutorial, including gameplay
     '''
@@ -99,6 +99,7 @@ def run_Tutorial(window):
     event.Mouse(visible=False)
     savePath = os.path.expanduser('~') + '/Desktop/Temp'  # where to save data
     eventRecorder = Data_Handler(savePath) # Data_Handler to record events of active tasks
+    eventRecorder.Competitive = competitive
 
     # configure eventRecorder with file columns
     Mpacket = {'Session': 0,
@@ -106,7 +107,8 @@ def run_Tutorial(window):
                'Run': 0,
                'Game': 'Single Player',
                'Trial': 0,
-               'P2_ID': 0}
+               'P2_ID': 0
+               }
 
     eventRecorder.ConfigureDataHandlerGameInformation(Mpacket)
 
@@ -154,7 +156,8 @@ def run_Tutorial(window):
             if event.getKeys(['return']):
                 Action = b1.cash()
                 moveOn = b1.pumps == 10
-                b1.box.opacity = 1
+                if competitive == '1':
+                    b1.box.opacity = 1
                 b1.outcome.setColor(u'green')
 
         # stop all player actions from registering and display step 5 when at 10 pumps
@@ -210,7 +213,8 @@ def run_Tutorial(window):
             Action = b1.pumpAction()
             if event.getKeys(['return']):
                 Action = b1.cash()
-                b1.box.opacity = 1
+                if competitive == '1':
+                    b1.box.opacity = 1
                 b1.outcome.setColor(u'green')
             if Action:
                 b1.update()
@@ -236,7 +240,7 @@ def run_Tutorial(window):
     window.flip()
     # watch balloons
     Is = Instructions.Instructions(window,os.getcwd())
-    Is.Watch(b1)
+    # Is.Watch(b1)
 
     # conigure eventRecorder
     eventRecorder.Game = 'Learning Single Rules'
@@ -267,108 +271,38 @@ def run_Tutorial(window):
     window.flip()
 
     # 16. explain multiplayer layout.
-    bButton = InstructionBox(window, [0,-0.5],"Multiplayer trials will look like this.\n\nYour balloon will always be on the left.",True)
-    bButton.buttonwait(balloons = [b1,b2])
-    window.flip()
-
-
-    # 17. explain multiplayer rules
-    bButton = InstructionBox(window, [0,-0.5],"Pump your balloon 10 times and cash in.",False)
-    CP = simulated_player('AGR',b1,b2) # create a simulated opponent
-
-    # get ready for multiplayer trial
-    bothdone = False
-    b1.reset()
-    b1.max = 12
-    b2.reset()
-    b2.max = 50
-    event.clearEvents()
-
-    # main trial loop
-    b1.Ex.setAutoDraw(True)
-    b2.Ex.setAutoDraw(True)
-    while not bothdone:
-        # let computer make moves, player only allowed to pump to 10 and cash in.
-        if b1.cashed: CP.make_action()
-        if b1.pumps < 10:
-            b1.pumpAction()
-            event.clearEvents()
-
-        if b1.pumps == 10:
-            if event.getKeys(['return']):
-                Action = b1.cash()
-
-
-        if b1.done and b2.done:
-            if b1.pumps > b2.pumps:
-                b1.box.opacity = 1
-                b1.outcome.setColor(u'green')
-                if b1.cashed and b2.cashed:
-                    b2.Ex.setText('X')
-            elif b1.pumps < b2.pumps:
-                b2.box.opacity = 1
-                b2.outcome.setColor(u'green')
-                if b1.cashed and b2.cashed:
-                    b1.Ex.setText('X')
-            elif b1.pumps == b2.pumps:
-                b1.Ex.setText('X')
-                b2.Ex.setText('X')
-            bothdone = True
-        for b in bButton.drawList:
-            b.draw()
-
-        b1.update()
-        b2.update()
+    if competitive == '1':
+        bButton = InstructionBox(window, [0,-0.5],"Multiplayer trials will look like this.\n\nYour balloon will always be on the left.",True)
+        bButton.buttonwait(balloons = [b1,b2])
         window.flip()
 
 
-    # 18. explain Multiplayer cashing in rules
-    bButton = InstructionBox(window, [0,-0.5],"In multiplayer trials, you will receive your tokens only if you cash in ABOVE the other player. \n\nLet's practice a few more multiplayer trials now.",True)
-    bButton.buttonwait(balloons = [b1,b2])
-    window.flip()
-    b1.Ex.setAutoDraw(False)
-    b2.Ex.setAutoDraw(False)
+        # 17. explain multiplayer rules
+        bButton = InstructionBox(window, [0,-0.5],"Pump your balloon 10 times and cash in.",False)
+        CP = simulated_player('AGR',b1,b2) # create a simulated opponent
 
-    b1.practice = False
-    b2.practice = False
-    window.flip()
-    # player 5 trials
-    HasTied = False
-    counter = 0
-    botList = ['HES','AGR','NS','HES','AGR','NS','HES','AGR','NS','HES','AGR','NS','HES','AGR','NS','HES','AGR','NS']
-    while counter <= 6:
-        CP = simulated_player(botList[counter],b1,b2)
-        b1.reset()
-        b2.reset()
-        eventRecorder.Trial += 1
-
-        fixation.draw()
-        window.flip()
-        eventRecorder.RecordEvent('Fixation')
-        core.wait(1)
-
+        # get ready for multiplayer trial
         bothdone = False
-
-        b2.max = np.random.randint(5,40) # limit range slightly so that computer doesn't pop too often.
-        eventRecorder.RecordEvent('StartPlay')
+        b1.reset()
+        b1.max = 12
+        b2.reset()
+        b2.max = 50
         event.clearEvents()
-
-        if counter >= 4:
-            b2.max = b1.max
 
         # main trial loop
         b1.Ex.setAutoDraw(True)
         b2.Ex.setAutoDraw(True)
         while not bothdone:
-            b1.pumpAction()
+            # let computer make moves, player only allowed to pump to 10 and cash in.
+            if b1.cashed: CP.make_action()
+            if b1.pumps < 10:
+                b1.pumpAction()
+                event.clearEvents()
 
-            CP.make_action()
+            if b1.pumps == 10:
+                if event.getKeys(['return']):
+                    Action = b1.cash()
 
-            if event.getKeys(['return']):
-                b1.cash()
-
-            if event.getKeys('9'):
-                b2.cash()
 
             if b1.done and b2.done:
                 if b1.pumps > b2.pumps:
@@ -382,21 +316,149 @@ def run_Tutorial(window):
                     if b1.cashed and b2.cashed:
                         b1.Ex.setText('X')
                 elif b1.pumps == b2.pumps:
-                    if b1.cashed and b2.cashed:
-                        b1.Ex.setText('X')
-                        b2.Ex.setText('X')
-                eventRecorder.RecordEvent('OutcomeScreen')
+                    b1.Ex.setText('X')
+                    b2.Ex.setText('X')
                 bothdone = True
-                counter += 1
+            for b in bButton.drawList:
+                b.draw()
+
             b1.update()
             b2.update()
-
             window.flip()
 
 
-        core.wait(2)
+        # 18. explain Multiplayer cashing in rules
+        bButton = InstructionBox(window, [0,-0.5],"In multiplayer trials, you will receive your tokens only if you cash in ABOVE the other player. \n\nLet's practice a few more multiplayer trials now.",True)
+        bButton.buttonwait(balloons = [b1,b2])
+        window.flip()
         b1.Ex.setAutoDraw(False)
         b2.Ex.setAutoDraw(False)
+
+        b1.practice = False
+        b2.practice = False
+        window.flip()
+        # player 5 trials
+        HasTied = False
+        counter = 0
+        botList = ['HES','AGR','NS','HES','AGR','NS','HES','AGR','NS','HES','AGR','NS','HES','AGR','NS','HES','AGR','NS']
+        while counter <= 6:
+            CP = simulated_player(botList[counter],b1,b2)
+            b1.reset()
+            b2.reset()
+            eventRecorder.Trial += 1
+
+            fixation.draw()
+            window.flip()
+            eventRecorder.RecordEvent('Fixation')
+            core.wait(1)
+
+            bothdone = False
+
+            b2.max = np.random.randint(5,40) # limit range slightly so that computer doesn't pop too often.
+            eventRecorder.RecordEvent('StartPlay')
+            event.clearEvents()
+
+            if counter >= 4:
+                b2.max = b1.max
+
+            # main trial loop
+            b1.Ex.setAutoDraw(True)
+            b2.Ex.setAutoDraw(True)
+            while not bothdone:
+                b1.pumpAction()
+
+                CP.make_action()
+
+                if event.getKeys(['return']):
+                    b1.cash()
+
+                if event.getKeys('9'):
+                    b2.cash()
+
+                if b1.done and b2.done:
+                    if b1.pumps > b2.pumps:
+                        b1.box.opacity = 1
+                        b1.outcome.setColor(u'green')
+                        if b1.cashed and b2.cashed:
+                            b2.Ex.setText('X')
+                    elif b1.pumps < b2.pumps:
+                        b2.box.opacity = 1
+                        b2.outcome.setColor(u'green')
+                        if b1.cashed and b2.cashed:
+                            b1.Ex.setText('X')
+                    elif b1.pumps == b2.pumps:
+                        if b1.cashed and b2.cashed:
+                            b1.Ex.setText('X')
+                            b2.Ex.setText('X')
+                    eventRecorder.RecordEvent('OutcomeScreen')
+                    bothdone = True
+                    counter += 1
+                b1.update()
+                b2.update()
+
+                window.flip()
+
+
+            core.wait(2)
+            b1.Ex.setAutoDraw(False)
+            b2.Ex.setAutoDraw(False)
+
+    else:
+        bButton = InstructionBox(window, [0,-0.5],"Multiplayer trials will look like this.\n\nYour balloon will always be on the left. Your balloons are completely separate. Any choices you make will have no affect on the other player's balloon.\n\nLet's practice a few more multiplayer trials now.",True)
+
+
+
+        bButton.buttonwait(balloons=[b1, b2])
+        window.flip()
+
+        b1.practice = False
+        b2.practice = False
+        window.flip()
+        counter = 0
+        while counter <= 6:
+            CP = simulated_player('NS', b1, b2)
+            b1.reset()
+            b2.reset()
+            eventRecorder.Trial += 1
+
+            fixation.draw()
+            window.flip()
+            eventRecorder.RecordEvent('Fixation')
+            core.wait(1)
+
+            bothdone = False
+
+            b2.max = np.random.randint(5, 40)  # limit range slightly so that computer doesn't pop too often.
+            eventRecorder.RecordEvent('StartPlay')
+            event.clearEvents()
+
+            while not bothdone:
+                b1.pumpAction()
+
+                CP.make_action()
+
+                if event.getKeys(['return']):
+                    b1.cash()
+                    b1.outcome.setColor(u'green')
+
+                if event.getKeys('9'):
+                    b2.cash()
+                    b2.outcome.setColor(u'green')
+
+                if b2.cashed:
+                    b2.outcome.setColor(u'green')
+
+                if b1.done and b2.done:
+                    eventRecorder.RecordEvent('OutcomeScreen')
+                    bothdone = True
+                    counter += 1
+                b1.update()
+                b2.update()
+
+                window.flip()
+
+            core.wait(2)
+
 
     # 21. Payment explained
     bButton = InstructionBox(window, [0,0],"At the end of today's experiment, you will receive your earnings from ONE balloon, which will be selected at random.\n\nAll balloons, including those that popped can be selected.",True)
@@ -409,5 +471,5 @@ def run_Tutorial(window):
 
 if __name__ == '__main__':
     MyWin = visual.Window([800, 500], monitor='testMonitor', color='grey', fullscr=False, screen=0, allowGUI=True)
-    run_Tutorial(MyWin)
+    run_Tutorial(MyWin,'0')
 

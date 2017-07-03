@@ -86,40 +86,29 @@ class Instructions:
             MyFile.write('1' + ',' + str(MaxBelief[0][0]) + '\n')
         return int(MaxBelief[0][0])
 
-    def dists(self,Max,type):
-        ticks = [0] + [' ' for _ in range(18)] + [Max] # tick labels for X axis
+    def dists(self,Type,Max):
+        event.Mouse(visible=True)
 
-        if 'DistRatings.csv' not in os.listdir(self.path):
-            with open(self.path+'/DistRatings.csv',mode = 'a') as MyFile:
-                X = ','.join(str(e) for e in [str(i) for i in range(5,105,5) + ['run','type']])
-                MyFile.write('%s\n'%X)
+        if Type == 0:
+            # Only on first distribution call make header
+            with open(self.path + '/DistRatings.csv', mode='a') as MyFile:
+                X = ','.join(str(e) for e in [str(i) for i in range(10, 110, 10) + ['run', 'type']])
+                MyFile.write('%s\n' % X)
 
-            Text = "Out of at least 100 balloons, where do you think any balloon is likely to pop? A higher number for a bar will indicate that you think more balloons will pop at that size."
+            Text = "Out of 50 balloons, where do you think the balloon is likely to pop? Placing more bets in a column will indicate that you think more balloons will pop at that size. You must place 50 bets to continue."
         else:
-            Text = "Out of at least 100 balloons, where do you think the other participants in today's session are likely to 'cash in'? A higher number for a bar will indicate that you think the other participants in today's session are more likely to pump to that value and cash in"
-
-        barsText = visual.TextStim(win=self.window,
-                                   height=.06,
-                                   wrapWidth=1.9,
-                                   color='black',
-                                   pos=[0, .85],
-                                   text=Text)
+            Text = "Out of 50 balloons, where do you think the other participants in today's session are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants in today's session are more likely to pump to that value and cash in. You must place 50 bets to continue."
 
         # Distribution to be drawn from qLib.distribution
-        bars = Distribution(window=self.window,
-                            drawList=[barsText],
-                            limits=[0, 100],
-                            labels=ticks,
-                            nBars=20,
-                            defaultHeight=[1 for f in range(20)],
-                            MaxVal=100,
-                            width=.9,
-                            h=.06)
-        bars[2].append(1)
-        bars[2].append(type)
-        with open(self.path+'/DistRatings.csv',mode = 'a') as MyFile:
-            X = ','.join(str(e) for e in bars[2])
-            MyFile.write('%s\n'%X)
+        bars = Distributor(self.window, Max, Text).initialize()
+        bars.append(1)
+        if Type == 0:
+            bars.append('pop')
+        else:
+            bars.append('social')
+        with open(self.path + '/DistRatings.csv', mode='a') as MyFile:
+            X = ','.join(str(e) for e in bars)
+            MyFile.write('%s\n' % X)
 
 class questions:
     '''
@@ -261,17 +250,20 @@ class questions:
         event.waitKeys(['right'])
 
 
-def Run_AllIntro(MyWin, path,skip):
+def Run_AllIntro(MyWin, path,skip,competitive):
     '''
     Runs all pieces of the introduction of experiment
     '''
     Instruct = Instructions(MyWin, path)
     if skip not in ['all','tutorial']:
-        Tutorial.run_Tutorial(MyWin)  # Run the tutorial
+        Tutorial.run_Tutorial(MyWin,competitive)  # Run the tutorial
 
     if skip != 'all':
         Questions = questions('/Users/JMP/Desktop/',MyWin)
-        File = open(os.getcwd() + '/instruction_quests.json')
+        if competitive == '1':
+            File = open(os.getcwd() + '/instruction_quests.json')
+        else:
+            File = open(os.getcwd() + '/instruction_quests 2.json')
         j = json.load(File) # Import json with questions for quiz
 
         # Ask questions
@@ -284,23 +276,33 @@ def Run_AllIntro(MyWin, path,skip):
 
         # Get maximum rating and distributions
         Max = Instruct.MaxRatings()
-        vid = visual.MovieStim3(MyWin, os.getcwd() +'/Resources/dist_vid.mp4', size=[700, 400], pos=[0, -150])
-        distIm = visual.ImageStim(MyWin, os.getcwd() + '/Resources/DistImage.png',size=[0.8,0.8], pos=[0,-.5])
+        vid = visual.MovieStim3(MyWin, os.getcwd() + '/Resources/dist_vid.mp4', size=[700, 400], pos=[0, -150])
+        distIm = visual.ImageStim(MyWin, os.getcwd() + '/Resources/DistImage.png', size=[0.8, 0.8], pos=[0, -.5])
         bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
-                                          "The scale below represents the size of a balloon from 0 pumps (leftmost column) to your estimated maximum balloon size (rightmost column). Each column represents a slightly larger balloon. \nAt what size do you think the balloons in this task are most likely to pop? Rate your expectations by clicking and dragging a bar."
-                                          ,True)
+                                          "The scale below represents the size of a balloon from 0 pumps (leftmost column) to your estimated maximum balloon size (rightmost column). Each column represents a slightly larger balloon. \nAt what size do you think the balloons in this task are most likely to pop? You can place a bet by tapping one of the columns with your cursor."
+                                          , True)
         bButton.buttonwait(extras=[distIm])
 
+        singleDist = Distributor(MyWin, Max,
+                                 instructions='Using only one bet, where do you think the balloons are most likely to pop?',
+                                 maxTotal=1).initialize()
+        print singleDist
+        with open(path + '/singleBet.csv', mode='a') as MyFile:
+            X = ','.join(str(e) for e in singleDist)
+            MyFile.write('%s\n' % X)
+
         bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
-                                          "Imagine that you would play as at least 100 balloons. At what size do you think these balloons will pop?\n\n You can place a bet by tapping one of the columns with your cursor. The more bets you place in a column, the more you expect that the balloons will pop at that size.",
+                                          "Imagine that you would play 50 balloons. At what size do you think these balloons will pop?\n\n You can place a bet by tapping one of the columns with your cursor. The more bets you place in a column, the more you expect that the balloons will pop at that size.",
                                           True)
         bButton.buttonwait(extras=[vid])
-        bButton = Tutorial.InstructionBox(MyWin, [0,0.5],"We will pay you for the accuracy of your bets by comparing your bets against one randomly drawn popped balloon from the experiment today. The more bets you place on the correct column, the more you win.", True)
+        bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
+                                          "We will pay you for the accuracy of your bets by comparing your bets against one randomly drawn popped balloon from the experiment today. The more bets you place on the correct column, the more you win.",
+                                          True)
         bButton.buttonwait(extras=[vid])
 
-        Instruct.dists(Max,'pop')
+        Instruct.dists(0, Max)
 
-        bButton = Tutorial.InstructionBox(MyWin, [0,0.5],
+        bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
                                           "With the same scale as before we would like you to indicate where you think other participants in todays session will pump to before they cash in.",
                                           True)
         bButton.buttonwait(extras=[distIm])
@@ -313,7 +315,6 @@ def Run_AllIntro(MyWin, path,skip):
             X = ','.join(str(e) for e in singleDist)
             MyFile.write('%s\n' % X)
 
-
         bButton = Tutorial.InstructionBox(MyWin, [0, 0.5],
                                           "Imagine that you would see another player from today's session play with 50 balloons. How many pumps do you think that player will make before cashing in?",
                                           True)
@@ -323,7 +324,7 @@ def Run_AllIntro(MyWin, path,skip):
                                           "We will pay you for the accuracy of your rating by comparing your bets against one randomly drawn cashed in balloon from another participant in today's experiment. The more bets that you place in the correct column, the more you win..",
                                           True)
         bButton.buttonwait(extras=[vid])
-        Instruct.dists(Max,'soc')
+        Instruct.dists(1, Max)
 
 if __name__ == '__main__':
     window = visual.Window([800,500],monitor='testMonitor',fullscr=True,screen=0,allowGUI=False)

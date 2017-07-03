@@ -23,9 +23,11 @@ class Data_Handler:
         self.path = FilePath    # Path to file for data writing
         self.p1 = p1,           # Balloon class for player 1
         self.p2 = p2,           # Balloon class for possible player 2
+        self.Competitive = 0,   # whether the subject is in a competitive session
         self.clock = core.Clock()
         self.Header = ['Session',
                   'SubjectID',
+                  'Competitive',
                   'Run',
                   'Game',
                   'Trial',
@@ -74,6 +76,7 @@ class Data_Handler:
         row[self.Header.index('Run')] = self.Run
         row[self.Header.index('Game')] = self.Game
         row[self.Header.index('Trial')] = self.Trial
+        row[self.Header.index('Competitive')] = self.Competitive
 
         if self.p1: # grab informatio nfrom P1 balloon if available
             row[self.Header.index('Tokens')] = self.p1.pumps

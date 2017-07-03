@@ -22,6 +22,7 @@ class Game:
         self.window = window
         self.path = path
         self.eventRecorder = eventRecorder # Data_Handler for task
+        self.Competitive = self.eventRecorder.Competitive
 
         self.TrialTimer = core.CountdownTimer() # No-Timer trial countdown clock
 
@@ -189,7 +190,8 @@ class Game:
             # if np.random.randint(0, 1000000) < 10:
             if event.getKeys(['return']):                     # FOR AUTO PUMP
                 Action = b1.cash()
-                b1.box.opacity = 1
+                if self.Competitive == '1':
+                    b1.box.opacity = 1
                 b1.outcome.setColor(u'green')
 
             if Action or TimerAction:
@@ -301,6 +303,9 @@ class Game:
                 b2Action = True
             elif Message == '2':
                 b2Action = b2.cash()
+                if self.Competitive == '0':
+                    b2.outcome.setColor(u'green')
+
 
             # Make Actions
             if b1.pumpAction(): # Pump and send message
@@ -317,26 +322,30 @@ class Game:
             if event.getKeys(['return']): # cash in and send messaged
                 if b1.cash():
                     Action = True
+                    if self.Competitive == '0':
+                        b1.outcome.setColor(u'green')
                     if self.sendMessage(GameSock,'2'):
                         self.rstart(); break # if something went wrong, end trial
 
 
             # Determine winner of trial
             if b1.done and b2.done:
-                if b1.pumps > b2.pumps:
-                    b1.box.opacity = 1
-                    b1.outcome.setColor(u'green')
-                    if b1.cashed and b2.cashed:
-                        b2.Ex.setText('X')
-                elif b1.pumps < b2.pumps:
-                    b2.box.opacity = 1
-                    b2.outcome.setColor(u'green')
-                    if b1.cashed and b2.cashed:
-                        b.Ex.setText('X')
-                elif b1.pumps == b2.pumps:
-                    if b1.cashed and b2.cashed:
-                        b1.Ex.setText('X')
-                        b2.Ex.setText('X')
+                if self.Competitive == '1':
+                    if b1.pumps > b2.pumps:
+                        b1.box.opacity = 1
+                        b1.outcome.setColor(u'green')
+                        if b1.cashed and b2.cashed:
+                            b2.Ex.setText('X')
+                    elif b1.pumps < b2.pumps:
+                        b2.box.opacity = 1
+                        b2.outcome.setColor(u'green')
+                        if b1.cashed and b2.cashed:
+                            b1.Ex.setText('X')
+                    elif b1.pumps == b2.pumps:
+                        if b1.cashed and b2.cashed:
+                            b1.Ex.setText('X')
+                            b2.Ex.setText('X')
+
 
 
                 self.eventRecorder.RecordEvent('OutcomeScreen')

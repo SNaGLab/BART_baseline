@@ -19,7 +19,7 @@ Mother = ('10.201.192.217',11111) #server's (IP,port)
 
 
 # Initial display to screen to see if subject is restarting
-expInfo = {'Computer':'','Restart?': 'No','ContactID':'','skipIntro':'No'}
+expInfo = {'Computer':'','Restart?': 'No','ContactID':'','skipIntro':'No','Competitive':"0"}
 dlg = gui.DlgFromDict(dictionary=expInfo)
 if dlg.OK is False:
     core.quit()
@@ -31,6 +31,7 @@ window = visual.Window(
 
 # Set up data_handler method and game class instance
 eventRecorder = Data_Handler(savePath)
+eventRecorder.Competitive = expInfo['Competitive']
 games = Game(window, savePath, eventRecorder)
 
 if expInfo['Restart?'] != 'No':
@@ -44,7 +45,7 @@ else: # dont want to restart (broke during tutorial)
             os.mkdir(savePath) # if subject did not restart, make a new temporary savepath dir.
             restart = False
 
-    Instructions.Run_AllIntro(window, savePath,expInfo['skipIntro'])
+    Instructions.Run_AllIntro(window, savePath,expInfo['skipIntro'],expInfo['Competitive'])
     games.window.flip()
     # Wait for main experiment to begin and tell server ready to play.
     visual.TextStim(win = window, text = 'Please wait while all participants ' +
