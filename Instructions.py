@@ -95,9 +95,9 @@ class Instructions:
                 X = ','.join(str(e) for e in [str(i) for i in range(10, 110, 10) + ['run', 'type']])
                 MyFile.write('%s\n' % X)
 
-            Text = "Out of 50 balloons, where do you think the balloon is likely to pop? Placing more bets in a column will indicate that you think more balloons will pop at that size. You must place 50 bets to continue."
+            Text = "Out of 50 balloons, where do you think the balloon is likely to pop? You must place 50 bets to continue."
         else:
-            Text = "Out of 50 balloons, where do you think the other participants in today's session are likely to 'cash in'? Placing more bets in a column will indicate that you think the other participants in today's session are more likely to pump to that value and cash in. You must place 50 bets to continue."
+            Text = "Out of 50 balloons, where do you think the other participants in today's session are likely to 'cash in'? You must place 50 bets to continue."
 
         # Distribution to be drawn from qLib.distribution
         bars = Distributor(self.window, Max, Text).initialize()

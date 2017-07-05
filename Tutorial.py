@@ -240,7 +240,7 @@ def run_Tutorial(window, competitive):
     window.flip()
     # watch balloons
     Is = Instructions.Instructions(window,os.getcwd())
-    # Is.Watch(b1)
+    Is.Watch(b1)
 
     # conigure eventRecorder
     eventRecorder.Game = 'Learning Single Rules'
@@ -263,7 +263,7 @@ def run_Tutorial(window, competitive):
     b1 = balloon(window, 1, os.getcwd() + '/Resources',eventRecorder = eventRecorder, practice = True)
     b2 = balloon(window, 2, os.getcwd() + '/Resources',eventRecorder = eventRecorder, practice = True)
 
-    b1.balloon.image = os.getcwd() + '/Resources/Balloons/GreyBalloonFull.png'
+    b2.balloon.image = os.getcwd() + '/Resources/Balloons/GreyBalloonFull.png'
     b2.Token.image = os.getcwd() + '/Resources/gameImages/Token_black_other.png'
 
     eventRecorder.p1 = b1
@@ -404,7 +404,7 @@ def run_Tutorial(window, competitive):
             b2.Ex.setAutoDraw(False)
 
     else:
-        bButton = InstructionBox(window, [0,-0.5],"Multiplayer trials will look like this.\n\nYour balloon will always be on the left. Your balloons are completely separate. Any choices you make will have no affect on the other player's balloon.\n\nLet's practice a few more multiplayer trials now.",True)
+        bButton = InstructionBox(window, [0,-0.5],"Multiplayer trials will look like this.\n\nYour balloon will always be on the left. Your balloon is completely separate from the other player's balloon. Any choices you make will have no affect on the other player's balloon.\n\nLet's practice a few more multiplayer trials now.",True)
 
 
 

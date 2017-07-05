@@ -196,6 +196,7 @@ def allSubAvgs(path,sess):
     for i in DS_cleaner(path):
         subpath = os.path.join(path, i)
         data = pd.read_csv(os.path.join(subpath, DS_cleaner(subpath)[0]))
+        print data.loc[0]
         if data.loc[0,'Session'] == sess:
             subvals.append(np.mean(list(data.Tokens)))
     return np.mean(subvals)

@@ -136,6 +136,6 @@ event.waitKeys('space')
 # Move all data to server computer and inform server that subject data is moved
 # Redirect to Qualtrics online Questionnaire
 games.window.close()
-webbrowser.open('https://cuboulder.qualtrics.com/jfe/form/SV_0UQNbiww2J0IgId', new=1)
+webbrowser.open('http://survey.az1.qualtrics.com/jfe/form/SV_6P5YEJxpkoRbqrH', new=1)
 move(savePath , os.getcwd() + '/Data/' + str(SubjID))
 gamesock.sendto('FIN',Mother)

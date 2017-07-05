@@ -187,8 +187,8 @@ class Game:
             Action = b1.pumpAction() # pump
 
             # Cash in
-            if np.random.randint(0, 1000000) < 10:
-            # if event.getKeys(['return']):                     # FOR AUTO PUMP
+            # if np.random.randint(0, 1000000) < 10:
+            if event.getKeys(['return']):                     # FOR AUTO PUMP
                 Action = b1.cash()
                 if self.Competitive == '1':
                     b1.box.opacity = 1
@@ -321,8 +321,8 @@ class Game:
                         print 'pump'
                         self.rstart(); break # if something went wrong, end trial
 
-            if np.random.randint(0,1000000) < 10:                                # FOR AUTO PUMP
-            # if event.getKeys(['return']): # cash in and send messaged
+            # if np.random.randint(0,1000000) < 10:                                # FOR AUTO PUMP
+            if event.getKeys(['return']): # cash in and send messaged
                 if b1.cash():
                     Action = True
                     if self.Competitive == '0':
