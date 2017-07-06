@@ -8,6 +8,7 @@ import Instructions
 from shutil import move
 from Supplementary import orange_white,risk_ambiguity_scale
 import webbrowser
+from requests import get
 from Coin_distributor import Distributor
 
 
@@ -51,7 +52,7 @@ else: # dont want to restart (broke during tutorial)
     visual.TextStim(win = window, text = 'Please wait while all participants ' +
                     'complete the instructions.\n\nThe game will begin shortly.').draw()
     games.window.flip()
-    gamesock.sendto(expInfo['ContactID']+'-'+expInfo['Computer'],Mother)
+    gamesock.sendto(expInfo['ContactID']+'-'+expInfo['Computer']+'-'+get('https://api.ipify.org').text,Mother)
     gamesock.setblocking(1)
     # When task begins server sends the subject their ID.
     SubjID = gamesock.recvfrom(100)[0]
