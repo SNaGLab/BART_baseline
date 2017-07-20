@@ -49,6 +49,7 @@ class Subject():
         self.subjectTrial['Run'] = trial_firstRow.Run
         self.subjectTrial['P2'] = trial_firstRow.P2_SubjectID
         self.subjectTrial['Game'] = trial_firstRow.Game
+        self.subjectTrial['Competitive'] = trial_firstRow.Competitive
 
         # store p1 information
         self.subjectTrial['P1_max'] = max(trial_dataFrame.Tokens)
@@ -89,13 +90,16 @@ class Subject():
 
         # get tokens for trial
         if self.subjectTrial['P1_end'] == 'Cash':
-            if self.subjectTrial['Game'] == 'Single Player':
+            if self.subjectTrial['Game'] == 0:
                 self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
             else:
-                if self.subjectTrial['P1_max'] > self.subjectTrial['P2_max']:
-                    self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
+                if self.subjectTrial['Competitive'] == 1:
+                    if self.subjectTrial['P1_max'] > self.subjectTrial['P2_max']:
+                        self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
+                    else:
+                        self.subjectTrial['TrialEndow'] = 0
                 else:
-                    self.subjectTrial['TrialEndow'] = 0
+                    self.subjectTrial['TrialEndow'] = self.subjectTrial['P1_max']
         else:
             self.subjectTrial['TrialEndow'] = 0
 
@@ -135,8 +139,8 @@ class Subject():
             PopCorrectBar = popsRatings[str(scaledPop)]  # places pop point within distirbution
         # calculate bonus
         popSum = np.sum(list(popsRatings)[1:-3])
-        popPercentCorrect = PopCorrectBar/popSum
-        popPercentIncorrect = (popSum - PopCorrectBar) / popSum
+        popPercentCorrect = float(PopCorrectBar)/float(popSum)
+        popPercentIncorrect = float(popSum - PopCorrectBar) / float(popSum)
         self.subjectTrial['popEndow'] = int(20 - (10*(1-popPercentCorrect)**2) - (10*(popPercentIncorrect)**2))
         self.subjectTrial['popEndow'] = str(self.subjectTrial['popEndow']) + '| $' + str(self.subjectTrial['popEndow'] * .2)
 
@@ -165,8 +169,8 @@ class Subject():
                 OtherCorrectBar = othersRatings[str(scaledOther)]
             
         otherSum = np.sum(list(othersRatings)[1:-2])
-        otherPercentCorrect = OtherCorrectBar / otherSum
-        otherPercentIncorrect = (otherSum - OtherCorrectBar) / otherSum
+        otherPercentCorrect = float(OtherCorrectBar) / float(otherSum)
+        otherPercentIncorrect = float(otherSum - OtherCorrectBar) / float(otherSum)
         self.subjectTrial['othersEndow'] = int(20 - (10 * (1 - otherPercentCorrect) ** 2) - (10 * (otherPercentIncorrect) ** 2))
         self.subjectTrial['othersEndow'] = str(self.subjectTrial['othersEndow']) + '| $' + str(self.subjectTrial['othersEndow'] * .2)
 

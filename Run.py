@@ -16,7 +16,7 @@ savePath = os.path.expanduser('~') + '/Desktop/Temp'
 
 # Set up UDP socket for communication with server
 gamesock = socket(AF_INET,SOCK_DGRAM)
-Mother = ('10.201.193.116',11111) #server's (IP,port)
+Mother = ('10.201.192.123',11111) #server's (IP,port)
 
 
 # Initial display to screen to see if subject is restarting
@@ -52,7 +52,7 @@ else: # dont want to restart (broke during tutorial)
     visual.TextStim(win = window, text = 'Please wait while all participants ' +
                     'complete the instructions.\n\nThe game will begin shortly.').draw()
     games.window.flip()
-    gamesock.sendto(expInfo['ContactID']+'-'+expInfo['Computer']+'-'+get('https://api.ipify.org').text,Mother)
+    gamesock.sendto(expInfo['ContactID']+'-'+expInfo['Computer'],Mother)
     gamesock.setblocking(1)
     # When task begins server sends the subject their ID.
     SubjID = gamesock.recvfrom(100)[0]
@@ -137,6 +137,6 @@ event.waitKeys('space')
 # Move all data to server computer and inform server that subject data is moved
 # Redirect to Qualtrics online Questionnaire
 games.window.close()
-webbrowser.open('http://survey.az1.qualtrics.com/jfe/form/SV_6P5YEJxpkoRbqrH', new=1)
+webbrowser.open('http://survey.az1.qualtrics.com/jfe/form/SV_6P5YEJxpkoRbqrH?SubjectID=%s'%SubjID, new=1)
 move(savePath , os.getcwd() + '/Data/' + str(SubjID))
 gamesock.sendto('FIN',Mother)

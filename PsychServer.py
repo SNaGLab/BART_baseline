@@ -10,6 +10,7 @@ from qLib2.qLib import *
 from psychopy import visual, core, event, gui
 import payment_methods
 from encryptBART import encryptBART
+import datetime
 
 
 
@@ -215,10 +216,10 @@ class Server():
             Subnum = int(np.random.randint(1, 120))
 
         # split message to get contactID
-        contactID,compNum,externalIP = message.split('-')
+        contactID,compNum = message.split('-')
 
         # add subject to Session DataFrame
-        self.SessionFrame.loc[Subnum] = [Subnum, player[0], externalIP, int(player[1]),
+        self.SessionFrame.loc[Subnum] = [Subnum, player[0], int(player[1]),
                                          self.Session, 1, 0, 'Single Player',
                                          0, 0, 0, False,contactID,compNum]
         logging.debug(getTime() + ': Player %s: self.SessionFrame row added' % Subnum)
@@ -492,7 +493,7 @@ class Server():
 
 
         self.SessionFrame = pd.DataFrame(
-            columns=['SubjectID', 'IP','ExtIP', 'PORT', 'Session', 'Run', 'Trial',
+            columns=['SubjectID', 'IP', 'PORT', 'Session', 'Run', 'Trial',
                      'Game', 'P2_ID', 'P2_IP', 'P2_PORT', 'Rating', 'ContactID','Computer'])
 
         self.StateFrame = pd.DataFrame(columns=['Available', 'Playing',
@@ -537,7 +538,8 @@ class Server():
                 
                 LinkerFrame = self.SessionFrame[['SubjectID','ContactID']]
                 encryptBART(LinkerFrame,self.Session,self.basepath + '/payments',self.password)
-                printframe = self.SessionFrame[['ExtIP','SubjectID','Computer']]
+                printframe = self.SessionFrame[['SubjectID','Computer','Session']]
+                printframe.Time = datetime.datetime.strftime(datetime.datetime.now(),"%Y-%m-%d %H:%M:%S")
                 printframe.to_csv(self.basepath + '/payments/IP_subjects_%s.csv'%self.Session)
 
             self.FrameManipulations()

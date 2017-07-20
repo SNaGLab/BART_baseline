@@ -1,4 +1,9 @@
 BART_baseline_contacts.xlsx
 Data/
 payments/
-Analysis/
+*.pyc
+.idea
+BART_baseline_contacts*
+.com.apple.timemachine.supported
+
+

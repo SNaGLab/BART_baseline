@@ -185,7 +185,7 @@ def run_Tutorial(window, competitive):
     # setup for trial loop
     eventRecorder.p1 = b1
     eventRecorder.p2 = None
-    eventRecorder.Game = 'Learning Cash'
+    eventRecorder.Game = 0
     b1.practice = False  # start eventRecorder with above parameters
 
     # Player stops receiving new trials after at least 5 cashed in balloons and 1 popped balloon.
@@ -239,11 +239,11 @@ def run_Tutorial(window, competitive):
     bButton.buttonwait()
     window.flip()
     # watch balloons
+    b1.practice = True
     Is = Instructions.Instructions(window,os.getcwd())
     Is.Watch(b1)
 
     # conigure eventRecorder
-    eventRecorder.Game = 'Learning Single Rules'
     b1.practice = False
 
     # alternate between in and out groups
