@@ -142,7 +142,7 @@ class Subject():
         popPercentCorrect = float(PopCorrectBar)/float(popSum)
         popPercentIncorrect = float(popSum - PopCorrectBar) / float(popSum)
         self.subjectTrial['popEndow'] = int(20 - (10*(1-popPercentCorrect)**2) - (10*(popPercentIncorrect)**2))
-        self.subjectTrial['popEndow'] = str(self.subjectTrial['popEndow']) + '| $' + str(self.subjectTrial['popEndow'] * .2)
+        self.subjectTrial['popEndow'] = str(PopCorrectBar) + '| $' + str(self.subjectTrial['popEndow'] * .2)
 
         # find a run rating to pay for rating accuracy
         while 1:
@@ -172,7 +172,7 @@ class Subject():
         otherPercentCorrect = float(OtherCorrectBar) / float(otherSum)
         otherPercentIncorrect = float(otherSum - OtherCorrectBar) / float(otherSum)
         self.subjectTrial['othersEndow'] = int(20 - (10 * (1 - otherPercentCorrect) ** 2) - (10 * (otherPercentIncorrect) ** 2))
-        self.subjectTrial['othersEndow'] = str(self.subjectTrial['othersEndow']) + '| $' + str(self.subjectTrial['othersEndow'] * .2)
+        self.subjectTrial['othersEndow'] = str(OtherCorrectBar) + '| $' + str(self.subjectTrial['othersEndow'] * .2)
 
 
     def riskAmb(self):

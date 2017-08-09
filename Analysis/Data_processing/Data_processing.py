@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 from datetime import datetime
-# from simplecrypt import encrypt, decrypt
+from simplecrypt import encrypt, decrypt
 from StringIO import StringIO
 
 """
@@ -23,66 +23,7 @@ def DS_cleaner(FilePath):
         Files.pop(I)
     return Files
 
-
-def makeSessionFrame(paymentDir):
-    """
-    makes dataframes of subject information for linking questionnaire
-    Args:
-        paymentDir: payment and linker file directory
-
-    Returns: Sessions = dataframe with first row of session frame as examplar of session time
-             allData = concatenated Session frames
-
-    """
-    files = DS_cleaner(paymentDir)
-    Sessions = pd.DataFrame(np.nan, index=range(len([_ for _ in files if "copy" in _])), columns=['Session','Time'])
-    i = 0
-    for f in files:
-        if "IP" in f:
-            session = pd.read_csv(paymentDir + f)
-            Sessions.loc[i] = session.loc[0]['Session'],datetime.strptime(session.loc[0]['Time'],"%Y-%m-%d %H:%M:%S")
-            i += 1
-            try:
-                allData = pd.concat([allData,session])
-            except:
-                allData = session
-
-    Sessions = Sessions.reset_index()
-    return Sessions, allData
-
-
-def determineSession(Qdata,paymentDir):
-    """
-    Links questionnaire data to subject IDs
-    Args:
-        Qdata: Questionnaire dataframe from Qualtrics
-        paymentDir: directory to pass to makeSessionFrame()
-
-    Returns: Questionnaire with subject ID column
-
-    """
-    Sessions, allData = makeSessionFrame(paymentDir)
-
-    Qdat = Qdata.loc[2:]  # top two rows of qualtrics data are nonsense
-    Qdat = Qdat.reset_index()
-
-    Qdat['SubjectID'] = 0  # empty row for subject IDs
-    for ix in Qdat.index:
-        #  get startDate for subject questionnaire and make into datetime
-        date = Qdat.loc[ix]['StartDate']
-        strp = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-
-        IP = Qdat.loc[ix]['IPAddress']  # get subject's external IP
-
-        #  find session that has the smallest timedelta (find the session subject was most likely in)
-        diffs = [np.abs(x - strp) for x in Sessions.Time]
-        session = Sessions.loc[diffs.index(min(diffs))]['Session']
-
-        Qdat.loc[ix,('SubjectID')] = int(allData[(allData.Session == session) & (allData.IP == IP)]['SubjectID'])
-    return Qdat
-
-
-def decryptAllCombine(paymentDir,password):
+def decryptAllCombine(paymentDir):
     """
     combines all linker files and encrypts for security
     Args:
@@ -92,6 +33,9 @@ def decryptAllCombine(paymentDir,password):
     Returns: combined and encrypted linker file
 
     """
+
+    password = raw_input('Please provide the password for the linker files:  ')
+
     for F in DS_cleaner(paymentDir):
         if "Linker" in F:
 
@@ -114,7 +58,6 @@ def decryptAllCombine(paymentDir,password):
     File.write(Alltext)
     File.close()
 
-
 def combinePayments(paymentDir):
     for F in DS_cleaner(paymentDir):
         if 'subjectPayment' in F:
@@ -125,7 +68,39 @@ def combinePayments(paymentDir):
                 NewFrame = pd.concat([NewFrame,df])
             except:
                 NewFrame = df
-    return NewFrame
+    NewFrame.to_csv(os.path.join(paymentDir,'combinedPayments.csv'))
+
+def scale_rating(data):
+    """
+    Generates the mean and standard deviation for distribution ratings
+    Args:
+        data: dataframe containing subjects distribution ratings
+
+    Returns: dataframe containing summary statistics Mean and SD.
+
+    """
+
+
+    colnames = ['SubjID', 'run', 'type', 'Competitive', 'mean', 'SD']
+    for i in data.index:
+        rowData = list(data.ix[i, ['SubjID', 'run', 'type', 'Competitive']])
+        max = data.ix[i, 'Max']
+        raws = np.array(max) * np.arange(0.05, 1, 0.1)
+        values = []
+        Row = list(data.ix[i, '10':'100'])
+        for ix, val in enumerate(raws):
+            num = Row[ix]
+            for _ in range(num):
+                values.append(val)
+        rowData.append(np.mean(values))
+        rowData.append(np.std(values))
+        df = pd.DataFrame(rowData).T
+        df.columns = colnames
+        try:
+            Alldat = pd.concat([Alldat, df])
+        except:
+            Alldat = df
+    return Alldat
 
 def RatingCombine(dir):
     """
@@ -138,6 +113,9 @@ def RatingCombine(dir):
     """
     for Subj in DS_cleaner(dir):
         # read in data
+        RF = pd.read_csv(os.path.join(dir,Subj,'Data_Tutorial.csv'))
+        RF = RF.reset_index()
+        comp = RF.ix[0,'Competitive']
         MaxRating = pd.read_csv(os.path.join(dir,Subj,'MaxRatings.csv'),header = None)
         dists = pd.read_csv(os.path.join(dir,Subj,'DistRatings.csv'))
         MaxRating.columns = ['Run','Rating']
@@ -152,7 +130,10 @@ def RatingCombine(dir):
         # export updated distribution file
         dists['Max'] = maxList
         dists['SubjID'] = Subj
+        dists['Competitive'] = comp
+        scale_rating(dists)
         dists.to_csv(os.path.join(dir,Subj,'dists_with_max.csv'))
+
 
 
 def formatTutorial(data,subjID):
@@ -214,6 +195,15 @@ def appendTutorial(dir):
 
 
 def fixfixations(data):
+    """
+    Ensures that every trial has a non-duplicated trial number
+    (occasionally task misses an trial step)
+    Args:
+        data: subject dataframe
+
+    Returns: fixed trial dataframe
+
+    """
     startTrial = min(data.Trial) - 1
     Trials = []
     for t in list(data.Fixation):
@@ -287,6 +277,14 @@ def SummarizeTrial(Trial):
     return series
 
 def removeRestarts(data):
+    """
+    Removes restarted trials
+    Args:
+        data: subject dataframe
+
+    Returns: fixed subject dataframe without restarted trials
+
+    """
     pretrials = len(pd.unique(data.Trial))
     data.Trial = fixfixations(data)
     removeList = []
@@ -299,6 +297,14 @@ def removeRestarts(data):
 
 
 def performSummarize(dir):
+    """
+    calls the summarize apply function on subject dataframes
+    Args:
+        dir: subject data directory
+
+    Returns: none (saves data to directory)
+
+    """
     appendTutorial(dir)
     for sub in DS_cleaner(dir):
         print sub
@@ -306,10 +312,67 @@ def performSummarize(dir):
         data = removeRestarts(data)
         data = data[data.Trial != max(data.Trial)]
         summarized = data.groupby(['Trial']).apply(SummarizeTrial)
-        summarized.to_csv(os.path.join(dir,sub,'summarized_data_combined_%s.csv'%sub))
+        summarized.to_csv(os.path.join(dir,sub,'summarized_data_combined_%s.csv'%float(sub)))
+
+
+
+def combine_data(dir,out):
+    """
+    combines all subjects' data together
+    Args:
+        dir: subjects data directory
+        out: directory for placing combined data
+
+    Returns: none (saves data to output directory)
+
+    """
+
+    for sub in DS_cleaner(dir):
+        subdat = pd.read_csv(os.path.join(dir,sub,'summarized_data_combined_%s.csv'%float(sub)))
+        try:
+            alldat = pd.concat([alldat,subdat])
+        except:
+            alldat = subdat
+
+    alldat.to_csv(os.path.join(out,'Allsubs_BART_Baseline_summarized.csv'))
+
+
+def combine_dists(dir,out):
+    """
+    combines all subjects' distribution data together
+    Args:
+        dir: subjects data directory
+        out: directory for placing combined data
+
+    Returns: none (saves data to output directory)
+
+    """
+    for sub in DS_cleaner(dir):
+        subdat = pd.read_csv(os.path.join(dir,sub,'dists_with_max.csv'))
+        try:
+            alldat = pd.concat([alldat,subdat])
+        except:
+            alldat = subdat
+
+    alldat.to_csv(os.path.join(out,'Allsubs_BART_Baseline_distributions.csv'))
+
+
+def perform_combinations(root,outpath):
+    RatingCombine(root)
+    combine_data(root,outpath)
+    combine_dists(root,outpath)
+
+def perform_supplementary(paymentDir):
+    decryptAllCombine(paymentDir)
+    combinePayments(paymentDir)
 
 
 if __name__ == '__main__':
-    performSummarize('/Users/JMP/Documents/S_BART/BART_baseline/Data')
+    root = '/Users/JMP/Documents/S_BART/BART_baseline/Data'
+    outpath = '/Users/JMP/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data'
+    paymentPath = '/Users/JMP/Documents/S_BART/BART_baseline/payments'
+    perform_combinations(root, outpath)
+    performSummarize(root)
+
 
 

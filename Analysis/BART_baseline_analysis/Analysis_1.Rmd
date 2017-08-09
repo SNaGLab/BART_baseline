@@ -1,0 +1,393 @@
+---
+title: "Social BART descriptives"
+output:
+  html_document: default
+  html_notebook: default
+  pdf_document: default
+---
+
+## Task
+Participants played 6 runs of the BART and S_BART. In Run 1 and 6, participants played Alone BART only. In 2-5 participants played S_BART trials interspersed with Alone BART trials. At the beginning of every run, participants made 3 ratings: 
+
+1. What they think the upper bound of the pop points is, 
+2. distributed 50 bets for where they thought the balloon was likely to pop,
+3. and distributed 50 bets for where they thought the other participants in that day's session would cash in (only asked in runs 2-5).
+
+Group sizes:
+
+* Competitive: 17
+* Non-Competitive: 20
+
+#___________________________________
+
+
+
+```{r, include=FALSE}
+library(ggplot2)
+library(magrittr)
+library(lme4)
+library(dplyr)
+
+## Gives count, mean, standard deviation, standard error of the mean, and confidence interval (default 95%).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   groupvars: a vector containing names of columns that contain grouping variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+    library(plyr)
+
+    # New version of length which can handle NA's: if na.rm==T, don't count them
+    length2 <- function (x, na.rm=FALSE) {
+        if (na.rm) sum(!is.na(x))
+        else       length(x)
+    }
+
+    # This does the summary. For each group's data frame, return a vector with
+    # N, mean, and sd
+    datac <- ddply(data, groupvars, .drop=.drop,
+      .fun = function(xx, col) {
+        c(N    = length2(xx[[col]], na.rm=na.rm),
+          mean = mean   (xx[[col]], na.rm=na.rm),
+          sd   = sd     (xx[[col]], na.rm=na.rm)
+        )
+      },
+      measurevar
+    )
+
+    # Rename the "mean" column    
+    datac <- rename(datac, c("mean" = measurevar))
+
+    datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+
+    # Confidence interval multiplier for standard error
+    # Calculate t-statistic for confidence interval: 
+    # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+    ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+    datac$ci <- datac$se * ciMult
+
+    return(datac)
+}
+
+## Norms the data within specified groups in a data frame; it normalizes each
+## subject (identified by idvar) so that they have the same mean, within each group
+## specified by betweenvars.
+##   data: a data frame.
+##   idvar: the name of a column that identifies each subject (or matched subjects)
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   betweenvars: a vector containing names of columns that are between-subjects variables
+##   na.rm: a boolean that indicates whether to ignore NA's
+normDataWithin <- function(data=NULL, idvar, measurevar, betweenvars=NULL,
+                           na.rm=FALSE, .drop=TRUE) {
+    library(plyr)
+
+    # Measure var on left, idvar + between vars on right of formula.
+    data.subjMean <- ddply(data, c(idvar, betweenvars), .drop=.drop,
+     .fun = function(xx, col, na.rm) {
+        c(subjMean = mean(xx[,col], na.rm=na.rm))
+      },
+      measurevar,
+      na.rm
+    )
+
+    # Put the subject means with original data
+    data <- merge(data, data.subjMean)
+
+    # Get the normalized data in a new column
+    measureNormedVar <- paste(measurevar, "_norm", sep="")
+    data[,measureNormedVar] <- data[,measurevar] - data[,"subjMean"] +
+                               mean(data[,measurevar], na.rm=na.rm)
+
+    # Remove this subject mean column
+    data$subjMean <- NULL
+
+    return(data)
+}
+
+
+## Summarizes data, handling within-subjects variables by removing inter-subject variability.
+## It will still work if there are no within-S variables.
+## Gives count, un-normed mean, normed mean (with same between-group mean),
+##   standard deviation, standard error of the mean, and confidence interval.
+## If there are within-subject variables, calculate adjusted values using method from Morey (2008).
+##   data: a data frame.
+##   measurevar: the name of a column that contains the variable to be summariezed
+##   betweenvars: a vector containing names of columns that are between-subjects variables
+##   withinvars: a vector containing names of columns that are within-subjects variables
+##   idvar: the name of a column that identifies each subject (or matched subjects)
+##   na.rm: a boolean that indicates whether to ignore NA's
+##   conf.interval: the percent range of the confidence interval (default is 95%)
+summarySEwithin <- function(data=NULL, measurevar, betweenvars=NULL, withinvars=NULL,
+                            idvar=NULL, na.rm=FALSE, conf.interval=.95, .drop=TRUE) {
+
+  # Ensure that the betweenvars and withinvars are factors
+  factorvars <- vapply(data[, c(betweenvars, withinvars), drop=FALSE],
+    FUN=is.factor, FUN.VALUE=logical(1))
+
+  if (!all(factorvars)) {
+    nonfactorvars <- names(factorvars)[!factorvars]
+    message("Automatically converting the following non-factors to factors: ",
+            paste(nonfactorvars, collapse = ", "))
+    data[nonfactorvars] <- lapply(data[nonfactorvars], factor)
+  }
+
+  # Get the means from the un-normed data
+  datac <- summarySE(data, measurevar, groupvars=c(betweenvars, withinvars),
+                     na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+
+  # Drop all the unused columns (these will be calculated with normed data)
+  datac$sd <- NULL
+  datac$se <- NULL
+  datac$ci <- NULL
+
+  # Norm each subject's data
+  ndata <- normDataWithin(data, idvar, measurevar, betweenvars, na.rm, .drop=.drop)
+
+  # This is the name of the new column
+  measurevar_n <- paste(measurevar, "_norm", sep="")
+
+  # Collapse the normed data - now we can treat between and within vars the same
+  ndatac <- summarySE(ndata, measurevar_n, groupvars=c(betweenvars, withinvars),
+                      na.rm=na.rm, conf.interval=conf.interval, .drop=.drop)
+
+  # Apply correction from Morey (2008) to the standard error and confidence interval
+  #  Get the product of the number of conditions of within-S variables
+  nWithinGroups    <- prod(vapply(ndatac[,withinvars, drop=FALSE], FUN=nlevels,
+                           FUN.VALUE=numeric(1)))
+  correctionFactor <- sqrt( nWithinGroups / (nWithinGroups-1) )
+
+  # Apply the correction factor
+  ndatac$sd <- ndatac$sd * correctionFactor
+  ndatac$se <- ndatac$se * correctionFactor
+  ndatac$ci <- ndatac$ci * correctionFactor
+
+  # Combine the un-normed means with the normed results
+  merge(datac, ndatac)
+}
+
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+Allsubs.data <- read.csv("~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_summarized.csv")
+Allsubs.dists <- read.csv("~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_distributions.csv")
+Allsubs.meanSD <- read.csv('~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_meanSDdists.csv')
+
+```
+
+
+
+
+
+### 1. Upper bound of pop points (error bars within-group standard error)
+```{r, message=FALSE, warning=FALSE}
+
+noncomp.max.mean <- Allsubs.dists %>%
+  subset(Max < 500) %>%
+  subset(type == 'pop') %>%
+  subset(Competitive == 0) %>%
+  summarySEwithin( measurevar="Max", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Non-competitive')
+
+Max.mean <- Allsubs.dists %>%
+  subset(Max < 500) %>%
+  subset(type == 'pop') %>%
+  subset(Competitive == 1) %>%
+  summarySEwithin( measurevar="Max", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Competitive') %>%
+  rbind(noncomp.max.mean)
+
+ ggplot(Max.mean, aes(x=factor(run), y=Max, fill=Competitive, group=Competitive)) +
+    geom_errorbar(width=.1, aes(ymin=Max-ci, ymax=Max+ci,color=Competitive),alpha = 0.7) +
+    geom_point(aes(color = Competitive)) + 
+    geom_line(aes(color = Competitive)) +
+    ggtitle('Average upper bound estimate distributions (prior to run)') + 
+    theme(plot.title = element_text(hjust = 0.5)) + xlab('Run')
+
+```
+
+
+
+
+### 2. Average mean and average SD of subject distributions (error bars within-group standard error)
+```{r, message=FALSE, warning=FALSE}
+
+noncomp.pop.mean <- Allsubs.meanSD %>%
+  subset(type == 'pop') %>%
+  subset(Competitive == 0) %>%
+  summarySEwithin( measurevar="mean", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Non-competitive')
+
+pop.mean <- Allsubs.meanSD %>%
+  subset(type == 'pop') %>%
+  subset(Competitive == 1) %>%
+  summarySEwithin( measurevar="mean", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Competitive') %>%
+  rbind(noncomp.pop.mean)
+
+popMean <- ggplot(pop.mean, aes(x=factor(run), y=mean, fill=Competitive, group=Competitive)) +
+    geom_errorbar(width=.1, aes(ymin=mean-ci, ymax=mean+ci,color=Competitive),alpha = 0.7) +
+    geom_point(aes(color = Competitive)) + 
+    geom_line(aes(color = Competitive)) +
+    ggtitle('Average Mean of Pop distributions (prior to run)') + 
+    theme(plot.title = element_text(hjust = 0.5))
+
+
+noncomp.pop.SD <- Allsubs.meanSD %>%
+  subset(type == 'pop') %>%
+  subset(Competitive == 0) %>%
+  summarySEwithin( measurevar="SD", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Non-Competitive')
+
+pop.SD <- Allsubs.meanSD %>%
+  subset(type == 'pop') %>%
+  subset(Competitive == 1) %>%
+  summarySEwithin( measurevar="SD", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Competitive') %>%
+  rbind(noncomp.pop.SD)
+
+popSD <- ggplot(pop.SD, aes(x=factor(run), y=SD, fill=Competitive, group=Competitive)) +
+    geom_errorbar(width=.1, aes(ymin=SD-ci, ymax=SD+ci,color=Competitive),alpha = 0.7) +
+    geom_point(aes(color = Competitive)) + 
+    geom_line(aes(color = Competitive)) +
+    ggtitle('Average SD of Pop distributions (prior to run)') + 
+    theme(plot.title = element_text(hjust = 0.5))
+
+multiplot(popMean,popSD, cols=1)
+
+
+noncomp.social.mean <- Allsubs.meanSD %>%
+  subset(type == 'social') %>%
+  subset(Competitive == 0) %>%
+  summarySEwithin( measurevar="mean", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Non-Competitive')
+
+social.mean <- Allsubs.meanSD %>%
+  subset(type == 'social') %>%
+  subset(Competitive == 1) %>%
+  summarySEwithin( measurevar="mean", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Competitive') %>%
+  rbind(noncomp.social.mean)
+
+socialMean <- ggplot(social.mean, aes(x=factor(run), y=mean, fill=Competitive, group=Competitive)) +
+    geom_errorbar(width=.1, aes(ymin=mean-ci, ymax=mean+ci,color=Competitive),alpha = 0.7) +
+    geom_point(aes(color = Competitive)) + 
+    geom_line(aes(color = Competitive)) +
+    ggtitle('Average Mean of Other distributions (prior to run)') + 
+    theme(plot.title = element_text(hjust = 0.5))
+
+
+noncomp.social.SD <- Allsubs.meanSD %>%
+  subset(type == 'social') %>%
+  subset(Competitive == 0) %>%
+  summarySEwithin( measurevar="SD", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Non-Competitive')
+
+social.SD <- Allsubs.meanSD %>%
+  subset(type == 'social') %>%
+  subset(Competitive == 1) %>%
+  summarySEwithin( measurevar="SD", withinvars="run",
+                        idvar="SubjID", na.rm=FALSE, conf.interval=.95) %>%
+  mutate(Competitive = 'Competitive') %>%
+  rbind(noncomp.social.SD)
+
+socialSD <- ggplot(social.SD, aes(x=factor(run), y=SD, fill=Competitive, group=Competitive)) +
+    geom_errorbar(width=.1, aes(ymin=SD-ci, ymax=SD+ci,color=Competitive),alpha = 0.7) +
+    geom_point(aes(color = Competitive)) + 
+    geom_line(aes(color = Competitive)) +
+    ggtitle('Average SD of Other distributions (prior to run)') + 
+    theme(plot.title = element_text(hjust = 0.5))
+
+multiplot(socialMean,socialSD, cols=1)
+
+```
+
+### 3. Average adjusted pumps (error bars between-group standard error)
+```{r, message=FALSE, warning=FALSE}
+
+Allsubs.data %>%
+  subset(P1_endState == 1) %>%
+  subset(Game == 0) %>%
+  subset(Run != 0) %>%
+  mutate(Competitive = ifelse(Competitive == 0,'Non-Competitive','Competitive')) %>%
+  summarySE(measurevar="maxP1_Tokens", groupvars=c("Run","Competitive")) %>%
+  ggplot(aes(x=Run, y=maxP1_Tokens, colour=Competitive)) + 
+  geom_errorbar(aes(ymin=maxP1_Tokens-se, ymax=maxP1_Tokens+se), width=.1) +
+  geom_line() +
+  geom_point() +
+  ggtitle('Average Alone Adjusted pumps by condition') + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Avg. Adjusted pumps') +
+  ylim(20,32.5)
+
+
+Allsubs.data %>%
+  subset(P1_endState == 1) %>%
+  subset(Game == 1) %>%
+  subset(Run != 0) %>%
+  mutate(Competitive = ifelse(Competitive == 0,'Non-Competitive','Competitive')) %>%
+  summarySE(measurevar="maxP1_Tokens", groupvars=c("Run","Competitive")) %>%
+  ggplot(aes(x=Run, y=maxP1_Tokens, colour=Competitive)) + 
+  geom_errorbar(aes(ymin=maxP1_Tokens-se, ymax=maxP1_Tokens+se), width=.1) +
+  geom_line() +
+  geom_point() +
+  ggtitle('Average Social Adjusted pumps by condition') + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Avg. Adjusted pumps') +
+  ylim(20,32.5)
+
+
+```
