@@ -211,9 +211,9 @@ class Server():
         '''
 
         # randomly generate a subjectID for player that is not yet used for experiment
-        Subnum = int(np.random.randint(1, 120))
-        while (str(Subnum) in os.listdir(os.getcwd() + '/Data')) or (Subnum in self.SessionFrame.index):
-            Subnum = int(np.random.randint(1, 120))
+        Subnum = int(np.random.randint(1, 500))
+        while (str(Subnum) in os.listdir(os.getcwd() + '/Data')) or (Subnum in list(self.SessionFrame.SubjectID)):
+            Subnum = int(np.random.randint(1, 500))
 
         # split message to get contactID
         contactID,compNum = message.split('-')
@@ -531,7 +531,7 @@ class Server():
                 for sub in list(self.StateFrame.index):
                     IP = self.SessionFrame.loc[sub,'IP']
                     PORT = int(self.SessionFrame.loc[sub,'PORT'])
-                    self.Mother.sendto(str(sub), (IP,PORT))
+                    self.Mother.sendto(str(int(sub)), (IP,PORT))
             
             elif StopB.Pressed():
                 fin = True
@@ -543,7 +543,6 @@ class Server():
                 printframe.to_csv(self.basepath + '/payments/IP_subjects_%s.csv'%self.Session)
 
             self.FrameManipulations()
-
 
             if self.TaskTimer.getTime() - self.lastTime >= 0.5:
                 self.window.update()

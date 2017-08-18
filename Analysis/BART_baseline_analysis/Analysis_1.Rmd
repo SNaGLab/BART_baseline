@@ -213,7 +213,8 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 
 
-Allsubs.data <- read.csv("~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_summarized.csv")
+Allsubs.data <- read.csv("~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_summarized.csv") %>%
+  subset(SubjectID != 96)
 Allsubs.dists <- read.csv("~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_distributions.csv")
 Allsubs.meanSD <- read.csv('~/Documents/S_BART/BART_baseline/Analysis/BART_baseline_analysis/combined_data/Allsubs_BART_Baseline_meanSDdists.csv')
 
@@ -388,6 +389,107 @@ Allsubs.data %>%
   theme(plot.title = element_text(hjust = 0.5)) +
   ylab('Avg. Adjusted pumps') +
   ylim(20,32.5)
+
+
+```
+
+
+
+```{r}
+
+Allsubs.data %>%
+  subset(Run == 1) %>%
+  subset(Game == 0) %>%
+  subset(P1_endState == 1) %>%
+  mutate(SubjectID = factor(SubjectID)) %>%
+  ggplot(aes(x = SubjectID, y = maxP1_Tokens)) + 
+  geom_boxplot() +
+  ggtitle('Run1 alone adjusted pumps by subject') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps')
+
+Allsubs.data %>%
+  subset(Run == 2) %>%
+  subset(Game == 0) %>%
+  subset(P1_endState == 1) %>%
+  mutate(SubjectID = factor(SubjectID)) %>%
+  ggplot(aes(x = SubjectID, y = maxP1_Tokens)) + 
+  geom_boxplot() +
+  ggtitle('Run1 alone adjusted pumps by subject') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps')
+
+Allsubs.data %>%
+  subset(Run == 3) %>%
+  subset(Game == 0) %>%
+  subset(P1_endState == 1) %>%
+  mutate(SubjectID = factor(SubjectID)) %>%
+  ggplot(aes(x = SubjectID, y = maxP1_Tokens)) + 
+  geom_boxplot() +
+  ggtitle('Run1 alone adjusted pumps by subject') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps')
+
+Allsubs.data %>%
+  subset(Run == 4) %>%
+  subset(Game == 0) %>%
+  subset(P1_endState == 1) %>%
+  mutate(SubjectID = factor(SubjectID)) %>%
+  ggplot(aes(x = SubjectID, y = maxP1_Tokens)) + 
+  geom_boxplot() +
+  ggtitle('Run1 alone adjusted pumps by subject') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps')
+
+Allsubs.data %>%
+  subset(Run == 5) %>%
+  subset(Game == 0) %>%
+  subset(P1_endState == 1) %>%
+  mutate(SubjectID = factor(SubjectID)) %>%
+  ggplot(aes(x = SubjectID, y = maxP1_Tokens)) + 
+  geom_boxplot() +
+  ggtitle('Run1 alone adjusted pumps by subject') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps')
+
+Allsubs.data %>%
+  subset(Run == 6) %>%
+  subset(Game == 0) %>%
+  subset(P1_endState == 1) %>%
+  mutate(SubjectID = factor(SubjectID)) %>%
+  ggplot(aes(x = SubjectID, y = maxP1_Tokens)) + 
+  geom_boxplot() +
+  ggtitle('Run1 alone adjusted pumps by subject') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps')
+```
+
+```{r}
+
+Allsubs.data %>%
+  subset(Competitive == 1) %>%
+  subset(P1_endState == 1) %>%
+  subset(P2_endState == 0) %>%
+  subset(Game == 1) %>%
+  mutate(maxP2_Tokens = factor(maxP2_Tokens)) %>%
+  ggplot(aes(x = maxP2_Tokens, y= maxP1_Tokens)) +
+  geom_boxplot()+ 
+  ggtitle('P1 end state conditioanl on P2 pop \nCompetitive') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps') + xlab('P2 pumps at pop')
+
+
+Allsubs.data %>%
+  subset(Competitive == 0) %>%
+  subset(P1_endState == 1) %>%
+  subset(P2_endState == 0) %>%
+  subset(Game == 1) %>%
+  mutate(maxP2_Tokens = factor(maxP2_Tokens)) %>%
+  ggplot(aes(x = maxP2_Tokens, y= maxP1_Tokens)) +
+  geom_boxplot()+ 
+  ggtitle('P1 end state conditioanl on P2 pop \nNon-competitive') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylab('Adjusted pumps') + xlab('P2 pumps at pop')
 
 
 ```
